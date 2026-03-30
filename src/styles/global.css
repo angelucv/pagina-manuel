@@ -76,6 +76,17 @@
 		will-change: opacity;
 	}
 
+	/* Móvil: crossfade un poco más rápido para que se perciba mejor. */
+	@media (max-width: 767.98px) {
+		.home-wall-layer--a {
+			animation-duration: 22s;
+		}
+
+		.home-wall-layer--b {
+			animation-duration: 22s;
+		}
+	}
+
 	@media (hover: hover) and (pointer: fine) {
 		.home-wall-tile:hover .home-wall-layer--a,
 		.home-wall-tile:hover .home-wall-layer--b {

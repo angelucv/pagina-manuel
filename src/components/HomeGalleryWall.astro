@@ -45,8 +45,9 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 					{
 						photos.length >= 2 && (
 							<span class="mt-2 block max-w-prose font-normal normal-case leading-relaxed tracking-normal text-neutral-500">
-								Fotos sujetas con chincheta sobre corcho; cada pieza alterna dos vistas muy despacio. En pantalla grande el
-								tablero reordena la disposición cada 6 s.
+								Fotos sujetas con chincheta sobre corcho; cada pieza alterna dos vistas (en móvil el cambio es un poco
+								más ágil). Cada 6 s el tablero reordena el mosaico; si tu teléfono tiene «reducir movimiento»
+								activado, las animaciones se desactivan.
 							</span>
 						)
 					}
@@ -177,7 +178,6 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 			return;
 		}
 
-		const mq = window.matchMedia('(min-width: 768px)');
 		let tid = 0;
 
 		const clear = () => {
@@ -199,7 +199,7 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 
 		const arm = () => {
 			clear();
-			if (!mq.matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 				grid.dataset.mosaicLayout = '0';
 				return;
 			}
@@ -207,7 +207,6 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		};
 
 		arm();
-		mq.addEventListener('change', arm);
 		window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', arm);
 	}
 
@@ -416,6 +415,89 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 	}
 	.home-wall-tile--7 {
 		transform: translate(-2px, -4px) rotate(-0.95deg);
+	}
+
+	/* Móvil: tres disposiciones del mosaico (misma lógica que desktop; solo ≥8 fotos y sin rejilla uniforme). */
+	@media (max-width: 767.98px) {
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='0'] .home-wall-tile--0,
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='0'] .home-wall-tile--1,
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='0'] .home-wall-tile--2,
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='0'] .home-wall-tile--3,
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='0'] .home-wall-tile--4,
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='0'] .home-wall-tile--5,
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='0'] .home-wall-tile--6,
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='0'] .home-wall-tile--7 {
+			grid-column: auto;
+			grid-row: auto;
+		}
+
+		/* Layout 1: franja ancha arriba y abajo */
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='1'] .home-wall-tile--0 {
+			grid-column: 1 / -1;
+			grid-row: 1;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='1'] .home-wall-tile--1 {
+			grid-column: 1;
+			grid-row: 2;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='1'] .home-wall-tile--2 {
+			grid-column: 2;
+			grid-row: 2;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='1'] .home-wall-tile--3 {
+			grid-column: 1;
+			grid-row: 3;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='1'] .home-wall-tile--4 {
+			grid-column: 2;
+			grid-row: 3;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='1'] .home-wall-tile--5 {
+			grid-column: 1;
+			grid-row: 4;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='1'] .home-wall-tile--6 {
+			grid-column: 2;
+			grid-row: 4;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='1'] .home-wall-tile--7 {
+			grid-column: 1 / -1;
+			grid-row: 5;
+		}
+
+		/* Layout 2: franjas anchas intercaladas */
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='2'] .home-wall-tile--0 {
+			grid-column: 1;
+			grid-row: 1;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='2'] .home-wall-tile--1 {
+			grid-column: 2;
+			grid-row: 1;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='2'] .home-wall-tile--2 {
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='2'] .home-wall-tile--3 {
+			grid-column: 1;
+			grid-row: 3;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='2'] .home-wall-tile--4 {
+			grid-column: 2;
+			grid-row: 3;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='2'] .home-wall-tile--5 {
+			grid-column: 1 / -1;
+			grid-row: 4;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='2'] .home-wall-tile--6 {
+			grid-column: 1;
+			grid-row: 5;
+		}
+		.home-wall-grid:not(.home-wall-grid--uniform)[data-mosaic-layout='2'] .home-wall-tile--7 {
+			grid-column: 2;
+			grid-row: 5;
+		}
 	}
 
 	@media (min-width: 768px) {
