@@ -259,25 +259,27 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		}
 	}
 
-	/* Pulso luminoso en todo dispositivo (solo CSS; WebView-safe con -webkit-). */
-	@media (prefers-reduced-motion: no-preference) {
-		.home-wall-ambient-pulse {
-			background: radial-gradient(
-				ellipse 88% 78% at 50% 42%,
-				rgb(255 255 255 / 0.32),
-				transparent 62%
-			);
-			-webkit-animation: mp-wall-ambient 4.5s ease-in-out infinite;
-			animation: mp-wall-ambient 4.5s ease-in-out infinite;
-		}
+	/*
+	 * Animaciones por defecto; solo se quitan en @media (prefers-reduced-motion: reduce).
+	 * No usar solo (prefers-reduced-motion: no-preference): en WebViews antiguos/in-app esa
+	 * consulta puede ser falsa y entonces no habría animación en absoluto.
+	 */
+	.home-wall-ambient-pulse {
+		background: radial-gradient(
+			ellipse 88% 78% at 50% 42%,
+			rgb(255 255 255 / 0.32),
+			transparent 62%
+		);
+		-webkit-animation: mp-wall-ambient 4.5s ease-in-out infinite;
+		animation: mp-wall-ambient 4.5s ease-in-out infinite;
+	}
 
-		.home-wall-section {
-			outline: 2px solid transparent;
-			outline-offset: 6px;
-			border-radius: 10px;
-			-webkit-animation: mp-wall-outline-hint 6s ease-in-out infinite;
-			animation: mp-wall-outline-hint 6s ease-in-out infinite;
-		}
+	.home-wall-section {
+		outline: 2px solid transparent;
+		outline-offset: 6px;
+		border-radius: 10px;
+		-webkit-animation: mp-wall-outline-hint 6s ease-in-out infinite;
+		animation: mp-wall-outline-hint 6s ease-in-out infinite;
 	}
 
 	@keyframes mp-wall-outline-hint {
@@ -375,12 +377,6 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		transform: rotate(calc(var(--place-sign, 1) * 9deg));
 	}
 
-	.home-wall-breathe {
-		display: block;
-		width: 100%;
-		height: auto;
-	}
-
 	/* Dos capas en la misma celda: la fila toma la altura máxima de las dos fotos (sin recuadro). */
 	.home-wall-crossfade {
 		display: grid;
@@ -404,54 +400,57 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		height: auto;
 		-webkit-backface-visibility: hidden;
 		backface-visibility: hidden;
+		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
 	}
 
-	@media (prefers-reduced-motion: no-preference) {
-		.home-wall-breathe {
-			-webkit-animation: mp-home-place-in 1.12s cubic-bezier(0.25, 0.9, 0.3, 1.15) backwards;
-			animation: mp-home-place-in 1.12s cubic-bezier(0.25, 0.9, 0.3, 1.15) backwards;
-			-webkit-animation-delay: calc(var(--breathe, 0) * 0.14s);
-			animation-delay: calc(var(--breathe, 0) * 0.14s);
-			transform-origin: 50% 80%;
-		}
+	.home-wall-breathe {
+		display: block;
+		width: 100%;
+		height: auto;
+		-webkit-animation: mp-home-place-in 1.12s cubic-bezier(0.25, 0.9, 0.3, 1.15) backwards;
+		animation: mp-home-place-in 1.12s cubic-bezier(0.25, 0.9, 0.3, 1.15) backwards;
+		-webkit-animation-delay: calc(var(--breathe, 0) * 0.14s);
+		animation-delay: calc(var(--breathe, 0) * 0.14s);
+		transform-origin: 50% 80%;
+	}
 
-		.home-wall-layer--a {
-			-webkit-animation: mp-home-xfade-a 36s ease-in-out infinite;
-			animation: mp-home-xfade-a 36s ease-in-out infinite;
-			-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
-			animation-delay: calc(var(--breathe, 0) * -4.25s);
-			will-change: opacity;
-		}
+	.home-wall-layer--a {
+		-webkit-animation: mp-home-xfade-a 36s ease-in-out infinite;
+		animation: mp-home-xfade-a 36s ease-in-out infinite;
+		-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
+		animation-delay: calc(var(--breathe, 0) * -4.25s);
+		will-change: opacity;
+	}
 
+	.home-wall-layer--b {
+		-webkit-animation: mp-home-xfade-b 36s ease-in-out infinite;
+		animation: mp-home-xfade-b 36s ease-in-out infinite;
+		-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
+		animation-delay: calc(var(--breathe, 0) * -4.25s);
+		will-change: opacity;
+	}
+
+	@media (max-width: 767.98px) {
+		.home-wall-layer--a,
 		.home-wall-layer--b {
-			-webkit-animation: mp-home-xfade-b 36s ease-in-out infinite;
-			animation: mp-home-xfade-b 36s ease-in-out infinite;
-			-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
-			animation-delay: calc(var(--breathe, 0) * -4.25s);
-			will-change: opacity;
+			-webkit-animation-duration: 12s;
+			animation-duration: 12s;
 		}
+	}
 
-		@media (max-width: 767.98px) {
-			.home-wall-layer--a,
-			.home-wall-layer--b {
-				-webkit-animation-duration: 12s;
-				animation-duration: 12s;
-			}
-		}
-
-		@media (hover: hover) and (pointer: fine) {
-			.home-wall-tile:hover .home-wall-layer--a,
-			.home-wall-tile:hover .home-wall-layer--b {
-				-webkit-animation-play-state: paused;
-				animation-play-state: paused;
-			}
-		}
-
-		.home-wall-tile[aria-pressed='true'] .home-wall-layer--a,
-		.home-wall-tile[aria-pressed='true'] .home-wall-layer--b {
+	@media (hover: hover) and (pointer: fine) {
+		.home-wall-tile:hover .home-wall-layer--a,
+		.home-wall-tile:hover .home-wall-layer--b {
 			-webkit-animation-play-state: paused;
 			animation-play-state: paused;
 		}
+	}
+
+	.home-wall-tile[aria-pressed='true'] .home-wall-layer--a,
+	.home-wall-tile[aria-pressed='true'] .home-wall-layer--b {
+		-webkit-animation-play-state: paused;
+		animation-play-state: paused;
 	}
 
 	.home-wall-img--single {

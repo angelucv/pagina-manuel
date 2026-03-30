@@ -21,8 +21,8 @@ const logosGaleria = [
 			class="relative z-10 mx-auto max-w-5xl border-t border-white/10 px-4 pt-10 sm:px-6 sm:pt-12"
 		>
 			<section class="max-w-3xl pb-10 text-left sm:pb-12" aria-label="Presentación">
-				<h1 class="text-2xl font-light tracking-tight text-white sm:text-3xl">Manuel Parada</h1>
-				<p class="mt-3 text-base leading-relaxed text-neutral-400 sm:text-lg">
+				<h1 class="sr-only">Manuel Parada — escultor</h1>
+				<p class="text-base leading-relaxed text-neutral-400 sm:text-lg">
 					La escultura como presencia:
 					<strong class="font-medium text-neutral-300">íntima o colosal</strong>, clásica o contemporánea. Manuel Parada
 					moldea ese espectro para
@@ -32,7 +32,15 @@ const logosGaleria = [
 					<strong class="font-medium text-neutral-300">rincón devocional al paisaje urbano</strong> — siempre con una lectura
 					plástica clara y un oficio que responde al lugar.
 				</p>
-				<p class="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+			</section>
+
+			<HomeGalleryWall />
+
+			<nav
+				class="mx-auto max-w-3xl border-t border-white/10 px-0 pb-2 pt-8 text-left sm:pb-3 sm:pt-10"
+				aria-label="Secciones del sitio"
+			>
+				<p class="flex flex-wrap gap-x-4 gap-y-2 text-sm">
 					<a
 						href="/sobre"
 						class="font-medium text-amber-200/90 underline-offset-2 transition-colors hover:text-amber-100 hover:underline"
@@ -57,9 +65,7 @@ const logosGaleria = [
 						>Noticias</a
 					>
 				</p>
-			</section>
-
-			<HomeGalleryWall />
+			</nav>
 
 			<section class="space-y-10 border-t border-white/10 py-12 sm:py-14" aria-labelledby="galeria-logos-titulo">
 				<div>
