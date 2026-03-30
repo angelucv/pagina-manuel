@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none">
+	<!-- Propuesta 1: Bloque monolítico. Impresión: sustituir fuente por Rozi Bold. Web: Cormorant Garamond. -->
+	<style>
+		.p {
+			font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+			font-weight: 700;
+			font-size: 26px;
+			letter-spacing: 0.42em;
+			text-anchor: middle;
+		}
+		.m {
+			font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+			font-weight: 600;
+			font-size: 13px;
+			letter-spacing: 0.55em;
+			text-anchor: middle;
+		}
+	</style>
+	<path d="M20 26L98 26L26 98Z" fill="#2d2d2d" />
+	<path d="M220 26L142 26L214 98Z" fill="#1f1f1f" />
+	<path d="M20 214L98 214L26 142Z" fill="#1f1f1f" />
+	<path d="M220 214L142 214L214 142Z" fill="#2d2d2d" />
+	<text x="120" y="100" class="m" fill="#a3a3a3">MANUEL</text>
+	<text x="120" y="144" class="p" fill="#e8e8e6">PARADA</text>
+</svg>

@@ -1,0 +1,90 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = 'Manuel Parada — obra y trayectoria.' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@500;600&display=swap"
+			rel="stylesheet"
+		/>
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<title>{title}</title>
+		<ClientRouter />
+	</head>
+	<body class="min-h-dvh bg-neutral-950 text-neutral-100 antialiased">
+		<a
+			href="#contenido"
+			class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-neutral-950"
+		>
+			Ir al contenido
+		</a>
+		<slot />
+		<footer class="border-t border-white/10 bg-neutral-950/90">
+			<div class="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 py-10 sm:px-6">
+				<a href="/" class="opacity-90 transition-opacity hover:opacity-100" aria-label="Manuel Parada, escultor — inicio">
+					<img
+						src="/logo-marca-apilada.png"
+						alt=""
+						width="1024"
+						height="571"
+						class="h-auto max-h-14 w-auto sm:max-h-16"
+						loading="lazy"
+						decoding="async"
+					/>
+				</a>
+				<p class="text-center text-xs text-neutral-600">Manuel Parada · escultor</p>
+			</div>
+		</footer>
+		<script is:inline>
+			(function () {
+				if (typeof window === 'undefined') return;
+				try {
+					if (sessionStorage.getItem('mpConsoleLogo')) return;
+					sessionStorage.setItem('mpConsoleLogo', '1');
+				} catch {
+					/* modo privado u otro bloqueo */
+				}
+
+				function pintar() {
+					const src = new URL('/logo-parada-monolito.svg', window.location.href).href;
+					console.log(
+						'%c\n%c Bloque monolítico · Manuel Parada',
+						'',
+						'font-size:11px;font-family:system-ui,sans-serif;color:#a3a3a3',
+					);
+					/* Chromium: muestra el SVG como fondo del bloque %c */
+					console.log(
+						'%c ',
+						'font-size:1px;line-height:100px;padding:50px 100px;background:url("' +
+							src +
+							'") center/contain no-repeat;border-radius:6px',
+					);
+					console.log(
+						'%c P A R A D A ',
+						'font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:12px;letter-spacing:.5em;color:#e8e8e6;background:#171717;padding:8px 12px;border-radius:4px',
+					);
+				}
+
+				if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pintar);
+				else pintar();
+			})();
+		</script>
+	</body>
+</html>

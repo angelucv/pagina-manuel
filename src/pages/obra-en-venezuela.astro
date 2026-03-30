@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import VenezuelaWorksMap from '../components/VenezuelaWorksMap.astro';
+---
+
+<BaseLayout
+	title="Mapa interactivo — Manuel Parada"
+	description="Mapa interactivo de obras escultóricas de Manuel Parada en Venezuela."
+>
+	<SiteHeader />
+	<div class="relative isolate min-h-[calc(100dvh-11rem)] bg-neutral-950">
+		<VenezuelaWorksMap />
+	</div>
+</BaseLayout>

@@ -1,0 +1,111 @@
+---
+/**
+ * Solo para revisar en local: tres fuentes tipo “pintado/brocha” para “Parada”.
+ * No enlazada desde el menú. Quitar o proteger en producción si no la quieres pública.
+ */
+const title = 'Preview — tipografías logo (Parada)';
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex, nofollow" />
+		<title>{title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=DM+Sans:wght@500;600&family=Kalam:wght@700&family=Permanent+Marker&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body class="min-h-dvh bg-neutral-950 px-4 py-10 text-neutral-100 antialiased">
+		<div class="mx-auto max-w-4xl">
+			<p class="text-sm text-neutral-500">
+				<a href="/" class="text-amber-200/90 underline-offset-2 hover:underline">← Volver al inicio</a>
+			</p>
+			<h1 class="mt-4 text-2xl font-light text-white">Comparar tipografías (solo revisión)</h1>
+			<p class="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-400">
+				Tres opciones de letra <strong class="text-neutral-300">tipo pintado / rotulador</strong> para la palabra
+				«Parada», con el mismo encabezado que en tu referencia (MANUEL arriba, ESCULTOR abajo). Elige una antes de
+				que se integre en el header del sitio.
+			</p>
+
+			<ul class="mt-10 grid list-none gap-8 p-0 sm:gap-10">
+				<li class="rounded-2xl border border-white/10 bg-neutral-900/50 p-8">
+					<p class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Opción 1</p>
+					<p class="mt-1 text-sm text-neutral-500">Permanent Marker — rotulador grueso, muy legible</p>
+					<div
+						class="mt-8 flex flex-col items-center gap-3 text-center"
+						style="font-family: 'DM Sans', system-ui, sans-serif;"
+					>
+						<span
+							class="text-base font-semibold uppercase tracking-[0.32em] text-neutral-400 sm:text-lg sm:tracking-[0.34em]"
+							>MANUEL</span
+						>
+						<span
+							class="text-[4.5rem] leading-none text-[#faf8f5] sm:text-[5.5rem]"
+							style="font-family: 'Permanent Marker', cursive; letter-spacing: 0.06em;"
+							>Parada</span
+						>
+						<span
+							class="text-[0.9375rem] font-semibold uppercase tracking-[0.28em] text-neutral-400 sm:text-lg sm:tracking-[0.3em]"
+							>ESCULTOR</span
+						>
+					</div>
+				</li>
+
+				<li class="rounded-2xl border border-white/10 bg-neutral-900/50 p-8">
+					<p class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Opción 2</p>
+					<p class="mt-1 text-sm text-neutral-500">Kalam Bold — manuscrito con rotulador, trazo orgánico</p>
+					<div
+						class="mt-8 flex flex-col items-center gap-3 text-center"
+						style="font-family: 'DM Sans', system-ui, sans-serif;"
+					>
+						<span
+							class="text-base font-semibold uppercase tracking-[0.32em] text-neutral-400 sm:text-lg sm:tracking-[0.34em]"
+							>MANUEL</span
+						>
+						<span
+							class="text-[4.25rem] leading-none text-[#faf8f5] sm:text-[5.25rem]"
+							style="font-family: 'Kalam', cursive; font-weight: 700; letter-spacing: 0.04em;"
+							>Parada</span
+						>
+						<span
+							class="text-[0.9375rem] font-semibold uppercase tracking-[0.28em] text-neutral-400 sm:text-lg sm:tracking-[0.3em]"
+							>ESCULTOR</span
+						>
+					</div>
+				</li>
+
+				<li class="rounded-2xl border border-white/10 bg-neutral-900/50 p-8">
+					<p class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Opción 3</p>
+					<p class="mt-1 text-sm text-neutral-500">Caveat Bold — pincel/caligrafía fluida, más artística</p>
+					<div
+						class="mt-8 flex flex-col items-center gap-3 text-center"
+						style="font-family: 'DM Sans', system-ui, sans-serif;"
+					>
+						<span
+							class="text-base font-semibold uppercase tracking-[0.32em] text-neutral-400 sm:text-lg sm:tracking-[0.34em]"
+							>MANUEL</span
+						>
+						<span
+							class="text-[5rem] leading-none text-[#faf8f5] sm:text-[6rem]"
+							style="font-family: 'Caveat', cursive; font-weight: 700; letter-spacing: 0.02em;"
+							>Parada</span
+						>
+						<span
+							class="text-[0.9375rem] font-semibold uppercase tracking-[0.28em] text-neutral-400 sm:text-lg sm:tracking-[0.3em]"
+							>ESCULTOR</span
+						>
+					</div>
+				</li>
+			</ul>
+
+			<p class="mt-12 text-center text-xs text-neutral-600">
+				Ruta: <code class="rounded bg-neutral-800 px-1.5 py-0.5 text-neutral-400">/preview-tipografias-logo</code>
+			</p>
+		</div>
+	</body>
+</html>

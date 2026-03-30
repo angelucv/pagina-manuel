@@ -1,0 +1,177 @@
+---
+interface Props {
+	/** En página dedicada (/sobre) sin borde superior extra */
+	variant?: 'standalone' | 'embedded';
+}
+
+const { variant = 'standalone' } = Astro.props;
+
+const toc = [
+	{ id: 'intro-bio', label: 'Introducción' },
+	{ id: 'lenguaje-visual', label: 'Lenguaje visual' },
+		{ id: 'dominio-tecnico', label: 'Oficio' },
+		{ id: 'contexto', label: 'Huella reciente' },
+		{ id: 'obra-publica', label: 'Territorio' },
+	{ id: 'perfil-academico', label: 'Formación y taller' },
+		{ id: 'taller-innovacion', label: 'Materiales y clima' },
+	{ id: 'redes-medios', label: 'Redes' },
+	{ id: 'cierre', label: 'Síntesis' },
+] as const;
+---
+
+<article
+	class:list={[
+		'bio-parada text-neutral-300',
+		variant === 'embedded' ? 'mt-8 border-t border-white/10 pt-10 sm:mt-10 sm:pt-12' : 'mt-16 border-t border-white/10 pt-14',
+	]}
+	aria-label="Biografía y obra de Manuel Parada"
+>
+	<header class="mb-10">
+		<h2 class="text-2xl font-light tracking-tight text-white sm:text-3xl">
+			La trascendencia de la materia y el mito
+		</h2>
+		<p class="mt-2 max-w-3xl text-sm leading-relaxed text-neutral-500 sm:text-base">
+			Escultura como presencia — del gesto cercano al monumento que fija el horizonte. Encargos de particulares a
+			instituciones, con la misma lectura plástica y un oficio que escucha el lugar.
+		</p>
+		<nav class="mt-8" aria-label="Índice de la biografía">
+			<p class="text-[10px] font-medium uppercase tracking-[0.25em] text-neutral-500">En esta página</p>
+			<ul class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+				{
+					toc.map(({ id, label }) => (
+						<li>
+							<a
+								href={`#${id}`}
+								class="text-neutral-400 underline-offset-2 transition-colors hover:text-white hover:underline"
+							>
+								{label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+	</header>
+
+	<div class="mx-auto max-w-3xl space-y-14">
+		<section id="intro-bio" class="scroll-mt-28">
+			<h3 class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Introducción</h3>
+			<div class="mt-4 space-y-4 text-base leading-relaxed">
+				<p>
+					<strong class="font-medium text-neutral-200">Manuel Parada</strong> es escultor contemporáneo venezolano:
+					moldea un <strong class="font-medium text-neutral-200">espectro amplísimo</strong> — de la pieza íntima al
+					gran formato — para <strong class="font-medium text-neutral-200">quien encarga con intención</strong>:
+					particulares, colectivos, instituciones y ciudad.
+				</p>
+				<p>
+					Su práctica hace dialogar figuración monumental, devoción urbana y abstracción geométrica; un mismo oficio
+					recorre <strong class="font-medium text-neutral-200">escalas y lenguajes</strong> con oído para el clima, la
+					salinidad y el ritmo del espacio — costa, plaza, templo o campus.
+				</p>
+			</div>
+		</section>
+
+		<section id="lenguaje-visual" class="scroll-mt-28">
+			<h3 class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Lenguaje visual</h3>
+			<p class="mt-4 text-base leading-relaxed">
+				Dos modos de <strong class="font-medium text-neutral-200">estar en el espacio</strong> — a menudo fundidos en un
+				solo encargo:
+			</p>
+			<ul class="mt-4 list-none space-y-4 border-l border-white/10 pl-5">
+				<li>
+					<p class="font-medium text-neutral-200">Masa y permanencia</p>
+					<p class="mt-1 text-sm leading-relaxed text-neutral-400">
+						Piedra y mármol tallados al cuerpo; volumen que pesa en la retina, legible desde lejos cuando el cielo es el
+						marco.
+					</p>
+				</li>
+				<li>
+					<p class="font-medium text-neutral-200">Geometría y respiración</p>
+					<p class="mt-1 text-sm leading-relaxed text-neutral-400">
+						Línea contemporánea en acero, bronce y resinas: el vacío como forma, el corte preciso, la abstracción que
+						ordena el paisaje.
+					</p>
+				</li>
+			</ul>
+		</section>
+
+		<section id="dominio-tecnico" class="scroll-mt-28">
+			<h3 class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Oficio y herramienta</h3>
+			<p class="mt-4 text-sm leading-relaxed text-neutral-400">
+				El gesto atraviesa <span class="text-neutral-300">talla</span> en piedra y mármol,
+				<span class="text-neutral-300">fundición y moldeado</span> en bronce y resina, y
+				<span class="text-neutral-300">ensamblaje</span> con metal y corte láser cuando la geometría lo exige — siempre
+				al servicio de una forma que se sostiene en el tiempo.
+			</p>
+		</section>
+
+		<section id="contexto" class="scroll-mt-28">
+			<h3 class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Huella reciente</h3>
+			<p class="mt-4 text-base leading-relaxed">
+				En los últimos años la obra se ha vuelto visible sobre todo en <strong class="font-medium text-neutral-200"
+					>devoción urbana</strong
+				>, <strong class="font-medium text-neutral-200">memoria cívica</strong> y diálogo con alcaldías e instituciones
+				— piezas pensadas para el sol, la sal y el paso cotidiano de muchas manos y miradas.
+			</p>
+		</section>
+
+		<section id="obra-publica" class="scroll-mt-28">
+			<h3 class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Obra en el territorio</h3>
+			<p class="mt-4 text-sm leading-relaxed text-neutral-400">
+				El mapa de la producción cruza <strong class="text-neutral-300">Baruta</strong>, el
+				<strong class="text-neutral-300">litoral</strong>, <strong class="text-neutral-300">universidades</strong> y
+				<strong class="text-neutral-300">plazas</strong> de Caracas y Miranda — del rincón devocional al frente marino.
+				Las <strong class="text-neutral-300">fichas completas</strong> (título, sede, año) viven en
+				<a href="/obra" class="text-amber-200/90 underline-offset-2 hover:underline">Obras</a>; el relato en prensa, en
+				<a href="/noticias" class="text-amber-200/90 underline-offset-2 hover:underline">Noticias</a>.
+			</p>
+		</section>
+
+		<section id="perfil-academico" class="scroll-mt-28">
+			<h3 class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Formación y taller</h3>
+			<p class="mt-4 text-sm leading-relaxed text-neutral-400">
+				La mirada se formó en el <strong class="text-neutral-300">IUESAPAR</strong> (Armando Reverón), licenciatura en
+				Artes Plásticas, tras los años del <strong class="text-neutral-300">Colegio Los Riscos</strong>. Hoy articula
+				investigación, diseño, moldeado e instalación desde el
+				<strong class="text-neutral-300">Taller de Escultura Manuel Parada</strong> — el mismo hilo que une maqueta y
+				monumento cuando el encargo lo pide.
+			</p>
+		</section>
+
+		<section id="taller-innovacion" class="scroll-mt-28">
+			<h3 class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Materiales que hablan con el clima</h3>
+			<p class="mt-4 text-sm leading-relaxed text-neutral-400">
+				Cuando el aire lleva sal y el sol no perdona, la elección del material es también composición:
+				<strong class="text-neutral-300">resina y fibra de vidrio</strong> con acabados que susurran bronce o piedra,
+				frente al peso — literal y económico — del metal donde el entorno lo desgasta.
+			</p>
+			<p class="mt-4 text-sm leading-relaxed text-neutral-400">
+				Parada ha hablado de la escultura en la calle casi como un bien común silencioso: proporción y silueta al servicio
+				de quien pasa, mira y vuelve a pasar.
+			</p>
+		</section>
+
+		<section id="redes-medios" class="scroll-mt-28">
+			<h3 class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Redes</h3>
+			<ul class="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-neutral-400">
+				<li>
+					<strong class="text-neutral-300">Instagram</strong> — <span class="text-neutral-500">@manuelparadaescultor</span>
+				</li>
+				<li><strong class="text-neutral-300">Facebook</strong> — Manuel Parada</li>
+				<li>
+					<strong class="text-neutral-300">Prensa y validación</strong> —
+					<a href="/noticias" class="text-amber-200/90 underline-offset-2 hover:underline">Noticias y medios</a>
+				</li>
+			</ul>
+		</section>
+
+		<section id="cierre" class="scroll-mt-28 border-t border-white/10 pt-10">
+			<h3 class="text-xs font-medium uppercase tracking-[0.2em] text-amber-200/80">Síntesis</h3>
+			<p class="mt-4 text-sm leading-relaxed text-neutral-400">
+				Una sola trayectoria que une formación, oficio y oído al encargo: el material que el lugar reclama, la figura o la
+				geometría que moviliza la memoria compartida, y una lectura plástica coherente desde el primer boceto hasta la
+				pieza instalada — íntima o colosal — frente al cielo abierto o al rincón que la acoge.
+			</p>
+		</section>
+	</div>
+</article>

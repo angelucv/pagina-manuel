@@ -1,0 +1,55 @@
+---
+/**
+ * Fondo generativo similar al de Actuarial Cortex (css-doodle + perspectiva 3D).
+ * https://actuarial-cortex.pages.dev/
+ */
+const doodleMarkup = `
+<style>
+  @grid: 30x1 / 100vmax;
+  :container { perspective: 22vmin; }
+  background: @m(
+    @r(180, 220),
+    radial-gradient(
+      @p(#1c1917, #292524, #3f3a36, #57534e, #78716c, #a8a29e, #d6d3d1, #a18072) 15%,
+      transparent 46%
+    ) @r(100%) @r(100%) / @r(1%, 4%) @lr no-repeat
+  );
+  @size: 50%;
+  @place-cell: center;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  animation: scale-up 28s linear infinite;
+  animation-delay: calc(@i * -.35s);
+  @keyframes scale-up {
+    0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0); }
+    12% { opacity: 0.75; }
+    90% { transform: translate3d(0, 0, @r(50vmin, 58vmin)) rotate(@r(-360deg, 360deg)); }
+    100% { opacity: 0; transform: translate3d(0, 0, 1vmin); }
+  }
+</style>
+`.trim();
+---
+
+<div class="hero-doodle-layer pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+	<css-doodle
+		class="hero-doodle-canvas absolute left-1/2 top-1/2 block h-[120vmax] w-[120vmax] -translate-x-1/2 -translate-y-1/2 opacity-[0.5] mix-blend-screen sm:opacity-[0.42]"
+		set:html={doodleMarkup}
+	/>
+	<div
+		class="absolute inset-0 bg-gradient-to-b from-neutral-950/30 via-neutral-950/75 to-neutral-950 ring-1 ring-inset ring-white/[0.04]"
+	></div>
+</div>
+
+<script is:inline src="https://unpkg.com/css-doodle@0.24.2/css-doodle.min.js"></script>
+
+<style is:global>
+	@media (prefers-reduced-motion: reduce) {
+		.hero-doodle-layer .hero-doodle-canvas {
+			display: none;
+		}
+
+		.hero-doodle-layer {
+			background: radial-gradient(ellipse 80% 60% at 50% 20%, #292524 0%, #0c0a09 55%, #0a0a0a 100%);
+		}
+	}
+</style>

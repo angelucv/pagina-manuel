@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+/* Entrada “dejar la copia sobre la mesa”: caída + toque + asentado (HomeGalleryWall). */
+@keyframes mp-home-place-in {
+	0% {
+		opacity: 0;
+		transform: translate3d(calc(var(--place-sign, 1) * 14px), -36px, 0) scale(1.1)
+			rotate(calc(var(--place-sign, 1) * 5deg));
+		filter: blur(5px);
+	}
+	45% {
+		opacity: 1;
+		filter: blur(0);
+	}
+	62% {
+		transform: translate3d(calc(var(--place-sign, 1) * -3px), 8px, 0) scale(0.96)
+			rotate(calc(var(--place-sign, 1) * -1.2deg));
+	}
+	78% {
+		transform: translate3d(0, -4px, 0) scale(1.02) rotate(calc(var(--place-sign, 1) * 0.4deg));
+	}
+	100% {
+		opacity: 1;
+		transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+		filter: blur(0);
+	}
+}
+
+/* Muro inicio: crossfade lento entre dos imágenes por celda (HomeGalleryWall). */
+@keyframes mp-home-xfade-a {
+	0%,
+	32% {
+		opacity: 1;
+	}
+	40%,
+	82% {
+		opacity: 0;
+	}
+	90%,
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes mp-home-xfade-b {
+	0%,
+	32% {
+		opacity: 0;
+	}
+	40%,
+	82% {
+		opacity: 1;
+	}
+	90%,
+	100% {
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.home-wall-breathe {
+		animation: mp-home-place-in 1.12s cubic-bezier(0.25, 0.9, 0.3, 1.15) backwards;
+		animation-delay: calc(var(--breathe, 0) * 0.14s);
+		transform-origin: 50% 80%;
+	}
+
+	.home-wall-layer--a {
+		animation: mp-home-xfade-a 36s ease-in-out infinite;
+		animation-delay: calc(var(--breathe, 0) * -4.25s);
+		will-change: opacity;
+	}
+
+	.home-wall-layer--b {
+		animation: mp-home-xfade-b 36s ease-in-out infinite;
+		animation-delay: calc(var(--breathe, 0) * -4.25s);
+		will-change: opacity;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.home-wall-tile:hover .home-wall-layer--a,
+		.home-wall-tile:hover .home-wall-layer--b {
+			animation-play-state: paused;
+		}
+
+	}
+
+	.home-wall-tile[aria-pressed='true'] .home-wall-layer--a,
+	.home-wall-tile[aria-pressed='true'] .home-wall-layer--b {
+		animation-play-state: paused;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.home-wall-breathe {
+		animation: none !important;
+	}
+
+	.home-wall-layer--a,
+	.home-wall-layer--b {
+		animation: none !important;
+		will-change: auto;
+	}
+
+	.home-wall-layer--b {
+		opacity: 0 !important;
+	}
+}
+
+/* Marca — propuesta «Bloque monolítico» (Cormorant Garamond como sustituto web de Rozi). */
+.font-logo-parada {
+	font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+}
+
+/* Cabecera — logo apilado: MANUEL / ESCULTOR en DM Sans. */
+.font-mp-marca-sans {
+	font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+}

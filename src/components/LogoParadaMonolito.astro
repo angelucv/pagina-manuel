@@ -1,0 +1,104 @@
+---
+/**
+ * Propuesta 1 — Bloque monolítico (estabilidad / piedra / escultura de gran formato).
+ * Tipografía: sustituto web de Rozi → Cormorant Garamond bold (sustituir por Rozi con licencia si aplica).
+ */
+interface Props {
+	/** Uso en cabecera: oculta "MANUEL", solo marca + apellido compacto */
+	compact?: boolean;
+	/** dark: fondos oscuros | light: fondos claros | gala: acento dorado mate */
+	variant?: 'dark' | 'light' | 'gala';
+	class?: string;
+	/** Texto alternativo para accesibilidad (omitir si decorative) */
+	alt?: string;
+	/** Junto a texto visible: oculta el logotipo para lectores de pantalla */
+	decorative?: boolean;
+}
+
+const {
+	compact = false,
+	variant = 'dark',
+	class: className = '',
+	alt = 'Manuel Parada',
+	decorative = false,
+} = Astro.props;
+
+const isLight = variant === 'light';
+const isGala = variant === 'gala';
+
+const blockMain = isLight ? '#262626' : '#2d2d2d';
+const blockDeep = isLight ? '#171717' : '#1f1f1f';
+const textMain = isLight ? '#0a0a0a' : '#e8e8e6';
+const textSub = isLight ? '#525252' : '#a3a3a3';
+const gold = '#9a8b6b';
+---
+
+<span
+	class:list={['inline-flex flex-col items-center', className]}
+	role={decorative ? undefined : 'img'}
+	aria-hidden={decorative ? 'true' : undefined}
+	aria-label={decorative ? undefined : alt}
+>
+	<svg
+		class="logo-monolito-svg h-full w-full max-h-[3.5rem] max-w-[3.5rem] sm:max-h-16 sm:max-w-16"
+		viewBox="0 0 240 240"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		aria-hidden="true"
+	>
+		{!decorative && <title>{alt}</title>}
+		<style>
+			.logo-monolito-svg .word-parada {
+				font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+				font-weight: 700;
+				font-size: 26px;
+				letter-spacing: 0.42em;
+				text-anchor: middle;
+			}
+			.logo-monolito-svg .word-manuel {
+				font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+				font-weight: 600;
+				font-size: 13px;
+				letter-spacing: 0.55em;
+				text-anchor: middle;
+			}
+		</style>
+
+		<!-- Cuatro masas angulares hacia el centro (vacío central amplio = aire alrededor del bloque tipográfico) -->
+		<path
+			d="M 20 26 L 98 26 L 26 98 Z"
+			fill={blockMain}
+			stroke={isGala ? gold : 'none'}
+			stroke-width={isGala ? '0.75' : '0'}
+			opacity="0.98"
+		/>
+		<path d="M 220 26 L 142 26 L 214 98 Z" fill={blockDeep} />
+		<path d="M 20 214 L 98 214 L 26 142 Z" fill={blockDeep} />
+		<path d="M 220 214 L 142 214 L 214 142 Z" fill={blockMain} opacity="0.98" />
+
+		{
+			isGala && (
+				<line
+					x1="120"
+					y1="52"
+					x2="120"
+					y2="188"
+					stroke={gold}
+					stroke-opacity="0.35"
+					stroke-width="0.5"
+				/>
+			)
+		}
+
+		{
+			!compact && (
+				<text x="120" y="100" class="word-manuel" fill={textSub}>
+					MANUEL
+				</text>
+			)
+		}
+		<text x="120" y={compact ? '130' : '144'} class="word-parada" fill={textMain}>
+			PARADA
+		</text>
+	</svg>
+</span>

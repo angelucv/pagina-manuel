@@ -1,0 +1,513 @@
+---
+import 'leaflet/dist/leaflet.css';
+import { obrasVenezuela } from '../data/obras-venezuela';
+
+const primera = obrasVenezuela[0];
+const obrasJson = JSON.stringify(
+	obrasVenezuela.map((o) => ({
+		id: o.id,
+		titulo: o.titulo,
+		lugar: o.lugar,
+		estadoMapa: o.estadoMapa ?? o.lugar,
+		descripcion: o.descripcion,
+		imagen: o.imagen,
+		lat: o.lat,
+		lng: o.lng,
+	})),
+);
+---
+
+{
+	obrasVenezuela.length > 0 && (
+		<section
+			class="vz-map-section border-t border-white/10 bg-neutral-950 px-3 py-10 sm:px-6 sm:py-14"
+			aria-labelledby="vz-map-heading"
+			id="obra-nacional"
+		>
+			<div class="mx-auto max-w-5xl">
+				<h2
+					id="vz-map-heading"
+					class="text-[10px] font-medium uppercase tracking-[0.25em] text-neutral-500 sm:text-xs"
+				>
+					Mapa interactivo
+				</h2>
+				<p class="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-400">
+					Al elegir una obra o un estado con obras, el mapa hace zoom a esa entidad. Si hay varias piezas en el mismo
+					estado, se muestra una franja con miniaturas para elegir entre ellas. «Ver toda Venezuela» vuelve al mapa
+					completo.
+				</p>
+
+				<div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,280px)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,320px)]">
+					<div class="relative overflow-hidden rounded-xl border border-white/10 bg-neutral-900/50 shadow-[inset_0_1px_0_rgb(255_255_255/0.04)]">
+						<p class="sr-only" id="vz-map-desc">
+							Mapa interactivo de Venezuela con estados y obras. Usa los marcadores o la lista.
+						</p>
+						<div class="flex justify-end border-b border-white/5 px-3 py-2 sm:px-4">
+							<button
+								type="button"
+								class="rounded-md border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] text-neutral-400 transition-colors hover:border-white/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
+								data-vz-reset-view
+							>
+								Ver toda Venezuela
+							</button>
+						</div>
+						<div
+							class="vz-leaflet z-0 min-h-[min(420px,55vh)] w-full sm:min-h-[460px]"
+							data-vz-leaflet
+							role="application"
+							aria-label="Mapa de Venezuela con obras"
+						/>
+						<div
+							class="border-t border-white/10 bg-neutral-900/80 px-3 py-3 sm:px-4"
+							data-vz-estado-panel
+							hidden
+						>
+							<p
+								class="text-xs font-medium text-neutral-300"
+								data-vz-estado-panel-title
+							/>
+							<div
+								class="vz-estado-rail mt-3 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:thin]"
+								data-vz-estado-rail
+								role="list"
+								aria-label="Obras en este estado"
+							/>
+						</div>
+						<p class="border-t border-white/10 bg-neutral-950/90 px-3 py-2 text-[10px] leading-snug text-neutral-500">
+							Límites estatales:{' '}
+							<a
+								class="text-neutral-400 underline decoration-white/20 underline-offset-2 hover:text-neutral-300"
+								href="https://www.naturalearthdata.com/"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								Natural Earth
+							</a>
+							. Calles: © OpenStreetMap /{' '}
+							<a
+								class="text-neutral-400 underline decoration-white/20 underline-offset-2 hover:text-neutral-300"
+								href="https://carto.com/attributions"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								CARTO
+							</a>
+							.
+						</p>
+					</div>
+
+					<aside
+						class="vz-detail rounded-xl border border-white/10 bg-neutral-900/40 p-4 sm:p-5"
+						aria-live="polite"
+						data-vz-detail
+					>
+						<div class="vz-detail-inner" data-vz-detail-inner>
+							{primera && (
+								<>
+									<div
+										class="vz-detail-photo relative mb-4 aspect-[4/3] overflow-hidden rounded-lg bg-neutral-800 ring-1 ring-white/10"
+										data-vz-photo-wrap
+									>
+										<img
+											src={primera.imagen}
+											alt=""
+											class="h-full w-full object-cover"
+											width="640"
+											height="480"
+											loading="lazy"
+											decoding="async"
+											data-vz-img
+										/>
+										<div
+											class="vz-detail-fallback hidden h-full w-full items-center justify-center bg-neutral-800 text-xs text-neutral-500"
+											data-vz-fallback
+										>
+											Sin imagen
+										</div>
+									</div>
+									<p class="text-xs font-medium uppercase tracking-wider text-red-400/90" data-vz-lugar>
+										{primera.lugar}
+									</p>
+									<h3 class="mt-1 text-lg font-medium tracking-tight text-white" data-vz-titulo>
+										{primera.titulo}
+									</h3>
+									<p class="mt-3 text-sm leading-relaxed text-neutral-400" data-vz-desc>
+										{primera.descripcion}
+									</p>
+								</>
+							)}
+						</div>
+					</aside>
+				</div>
+
+				<ul class="mt-8 flex flex-wrap gap-2" aria-label="Lista de obras por lugar">
+					{obrasVenezuela.map((o) => (
+						<li>
+							<button
+								type="button"
+								class="vz-list-btn rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-neutral-300 transition-colors hover:border-white/25 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+								data-vz-list={o.id}
+							>
+								{o.lugar}
+							</button>
+						</li>
+					))}
+				</ul>
+			</div>
+
+			<script type="application/json" set:html={obrasJson} data-vz-data />
+		</section>
+	)
+}
+
+<script>
+	import L from 'leaflet';
+	import type { FeatureCollection, Feature, Geometry } from 'geojson';
+
+	type Obra = {
+		id: string;
+		titulo: string;
+		lugar: string;
+		estadoMapa: string;
+		descripcion: string;
+		imagen: string;
+		lat: number;
+		lng: number;
+	};
+
+	function norm(s: string): string {
+		return s
+			.normalize('NFD')
+			.replace(/\p{M}/gu, '')
+			.toLowerCase()
+			.trim();
+	}
+
+	function parseObras(): Obra[] {
+		const el = document.querySelector('[data-vz-data]');
+		if (!el?.textContent) return [];
+		try {
+			return JSON.parse(el.textContent) as Obra[];
+		} catch {
+			return [];
+		}
+	}
+
+	const GEO_URL = '/data/venezuela-estados.geojson';
+
+	const styleBase = {
+		color: 'rgb(255 255 255 / 0.35)',
+		weight: 1,
+		fillColor: '#404040',
+		fillOpacity: 0.45,
+	};
+
+	const styleMuted = {
+		color: 'rgb(255 255 255 / 0.2)',
+		weight: 0.8,
+		fillColor: '#2a2a2a',
+		fillOpacity: 0.35,
+	};
+
+	const styleActive = {
+		color: 'rgb(220 38 38 / 0.85)',
+		weight: 2,
+		fillColor: '#7f1d1d',
+		fillOpacity: 0.55,
+	};
+
+	function bindVzMap() {
+		const root = document.getElementById('obra-nacional');
+		const el = root?.querySelector<HTMLElement>('[data-vz-leaflet]');
+		if (!root || !el) return;
+
+		const prev = (root as unknown as { __vzMap?: L.Map }).__vzMap;
+		if (prev) {
+			prev.remove();
+			(root as unknown as { __vzMap?: L.Map }).__vzMap = undefined;
+		}
+
+		const obras = parseObras();
+		const byId = new Map(obras.map((o) => [o.id, o]));
+
+		const lugar = root.querySelector('[data-vz-lugar]');
+		const titulo = root.querySelector('[data-vz-titulo]');
+		const desc = root.querySelector('[data-vz-desc]');
+		const img = root.querySelector<HTMLImageElement>('[data-vz-img]');
+		const fallback = root.querySelector('[data-vz-fallback]');
+		const listBtns = root.querySelectorAll('[data-vz-list]');
+
+		const markerByObraId = new Map<string, L.CircleMarker>();
+		let geoLayer: L.GeoJSON | null = null;
+		let activeEstadoKey: string | null = null;
+
+		function estadoKeyObra(o: Obra): string {
+			return norm(o.estadoMapa || o.lugar);
+		}
+
+		function setLayerStylesForEstado(estadoKey: string | null) {
+			if (!geoLayer) return;
+			geoLayer.eachLayer((ly) => {
+				const fl = ly as L.Layer & { feature?: Feature<Geometry> };
+				const name = norm(String(fl.feature?.properties?.name ?? ''));
+				let st = styleBase;
+				if (estadoKey === null) st = styleBase;
+				else if (name === estadoKey) st = styleActive;
+				else st = styleMuted;
+				if ('setStyle' in ly && typeof ly.setStyle === 'function') {
+					(ly as L.Path).setStyle(st);
+				}
+			});
+		}
+
+		function obrasEnEstado(estadoKey: string): Obra[] {
+			return obras.filter((o) => estadoKeyObra(o) === estadoKey);
+		}
+
+		let countryBounds: L.LatLngBounds | null = null;
+		let map!: L.Map;
+		let currentObraId: string | null = null;
+
+		function zoomToEstadoKey(estadoKey: string) {
+			if (!geoLayer) return;
+			let bounds: L.LatLngBounds | null = null;
+			geoLayer.eachLayer((ly) => {
+				const fl = ly as L.Layer & { feature?: Feature<Geometry> };
+				const name = norm(String(fl.feature?.properties?.name ?? ''));
+				if (name !== estadoKey) return;
+				const path = ly as L.Path;
+				if (typeof path.getBounds === 'function') {
+					const b = path.getBounds();
+					if (b.isValid()) bounds = bounds ? bounds.extend(b) : b;
+				}
+			});
+			if (bounds?.isValid()) {
+				map.fitBounds(bounds.pad(0.12), { maxZoom: 12, animate: true });
+			}
+		}
+
+		function nombreEstadoLegible(estadoKey: string): string {
+			let found = '';
+			if (!geoLayer) return estadoKey;
+			geoLayer.eachLayer((ly) => {
+				const fl = ly as L.Layer & { feature?: Feature<Geometry> };
+				const n = String(fl.feature?.properties?.name ?? '');
+				if (norm(n) === estadoKey) found = n;
+			});
+			return found || estadoKey;
+		}
+
+		function renderEstadoRail(estadoKey: string, activeId: string, visible: boolean) {
+			const panel = root.querySelector<HTMLElement>('[data-vz-estado-panel]');
+			const titleEl = root.querySelector('[data-vz-estado-panel-title]');
+			const rail = root.querySelector<HTMLElement>('[data-vz-estado-rail]');
+			if (!panel || !titleEl || !rail) return;
+			rail.replaceChildren();
+			const list = obrasEnEstado(estadoKey);
+			if (!visible || list.length < 2) {
+				panel.hidden = true;
+				return;
+			}
+			panel.hidden = false;
+			const nombre = nombreEstadoLegible(estadoKey);
+			titleEl.textContent = `${list.length} obras en ${nombre} — elige una`;
+			for (const o of list) {
+				const btn = document.createElement('button');
+				btn.type = 'button';
+				btn.setAttribute('role', 'listitem');
+				btn.className = `vz-rail-card group flex w-[6.5rem] shrink-0 flex-col overflow-hidden rounded-lg border bg-neutral-800/60 text-left outline-none transition-colors hover:border-white/25 focus-visible:ring-2 focus-visible:ring-red-500/60 ${
+					o.id === activeId
+						? 'border-red-500/50 ring-1 ring-red-500/50'
+						: 'border-white/10'
+				}`;
+				const im = document.createElement('img');
+				im.src = o.imagen;
+				im.alt = '';
+				im.loading = 'lazy';
+				im.className = 'h-16 w-full object-cover opacity-90 group-hover:opacity-100';
+				const span = document.createElement('span');
+				span.className = 'line-clamp-2 px-1.5 py-1 text-[10px] leading-tight text-neutral-300';
+				span.textContent = o.titulo;
+				btn.append(im, span);
+				btn.addEventListener('click', () => setActive(o.id, { skipZoom: true }));
+				rail.append(btn);
+			}
+		}
+
+		function setActive(id: string, opts?: { skipZoom?: boolean; collapseRail?: boolean }) {
+			const o = byId.get(id);
+			if (!o || !lugar || !titulo || !desc || !img) return;
+			currentObraId = id;
+
+			lugar.textContent = o.lugar;
+			titulo.textContent = o.titulo;
+			desc.textContent = o.descripcion;
+			img.alt = o.titulo;
+			img.src = o.imagen;
+			if (fallback instanceof HTMLElement) {
+				fallback.classList.add('hidden');
+				fallback.classList.remove('flex');
+			}
+			img.classList.remove('hidden');
+
+			activeEstadoKey = estadoKeyObra(o);
+			setLayerStylesForEstado(activeEstadoKey);
+
+			if (!opts?.skipZoom) zoomToEstadoKey(activeEstadoKey);
+
+			const showRail = !opts?.collapseRail && obrasEnEstado(activeEstadoKey).length >= 2;
+			renderEstadoRail(activeEstadoKey, id, showRail);
+
+			markerByObraId.forEach((m, oid) => {
+				const on = oid === id;
+				m.setStyle({
+					radius: on ? 11 : 8,
+					color: on ? '#fecaca' : '#fff',
+					weight: on ? 2 : 1.5,
+					fillColor: '#dc2626',
+					fillOpacity: on ? 1 : 0.88,
+				});
+				if (on) m.bringToFront();
+			});
+
+			listBtns.forEach((b) => {
+				const bid = b.getAttribute('data-vz-list');
+				if (bid === id) b.setAttribute('aria-pressed', 'true');
+				else b.removeAttribute('aria-pressed');
+			});
+		}
+
+		map = L.map(el, {
+			scrollWheelZoom: false,
+			attributionControl: true,
+			zoomControl: true,
+		});
+
+		(root as unknown as { __vzMap: L.Map }).__vzMap = map;
+
+		L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+			subdomains: 'abcd',
+			maxZoom: 20,
+			attribution: '',
+		}).addTo(map);
+
+		fetch(GEO_URL)
+			.then((r) => {
+				if (!r.ok) throw new Error(String(r.status));
+				return r.json() as Promise<FeatureCollection>;
+			})
+			.then((data) => {
+				geoLayer = L.geoJSON(data, {
+					style: () => ({ ...styleBase }),
+					onEachFeature(feature, layer) {
+						const n = String(feature.properties?.name ?? '');
+						layer.bindTooltip(n, { sticky: true, className: 'vz-map-tooltip' });
+						layer.on('click', () => {
+							const key = norm(n);
+							const enEstado = obras.filter((o) => estadoKeyObra(o) === key);
+							if (enEstado.length === 0) return;
+							zoomToEstadoKey(key);
+							activeEstadoKey = key;
+							setLayerStylesForEstado(key);
+							setActive(enEstado[0].id, { skipZoom: true });
+						});
+					},
+				}).addTo(map);
+
+				const b = geoLayer.getBounds();
+				if (b.isValid()) {
+					countryBounds = b;
+					map.fitBounds(b.pad(0.08));
+				}
+
+				const first = obras[0]?.id;
+				if (first) setActive(first, { skipZoom: true, collapseRail: true });
+			})
+			.catch(() => {
+				map.setView([8, -66], 5);
+				const first = obras[0]?.id;
+				if (first) setActive(first, { skipZoom: true, collapseRail: true });
+			});
+
+		for (const o of obras) {
+			const m = L.circleMarker([o.lat, o.lng], {
+				radius: 8,
+				color: '#fff',
+				weight: 1.5,
+				fillColor: '#dc2626',
+				fillOpacity: 0.88,
+			});
+			markerByObraId.set(o.id, m);
+			m.addTo(map);
+			m.on('click', () => setActive(o.id, { skipZoom: false }));
+			m.bindTooltip(o.titulo, { direction: 'top' });
+		}
+
+		if (img && fallback) {
+			img.addEventListener('error', () => {
+				img.classList.add('hidden');
+				fallback.classList.remove('hidden');
+				fallback.classList.add('flex');
+			});
+		}
+
+		listBtns.forEach((b) => {
+			b.addEventListener('click', () => {
+				const id = b.getAttribute('data-vz-list');
+				if (id) setActive(id, { skipZoom: false });
+			});
+		});
+
+		root.querySelectorAll<HTMLButtonElement>('[data-vz-reset-view]').forEach((resetBtn) => {
+			resetBtn.addEventListener('click', () => {
+				if (countryBounds?.isValid()) map.fitBounds(countryBounds.pad(0.08), { animate: true });
+				activeEstadoKey = null;
+				setLayerStylesForEstado(null);
+				markerByObraId.forEach((m, oid) => {
+					const on = oid === currentObraId;
+					m.setStyle({
+						radius: on ? 11 : 8,
+						color: on ? '#fecaca' : '#fff',
+						weight: on ? 2 : 1.5,
+						fillColor: '#dc2626',
+						fillOpacity: on ? 1 : 0.88,
+					});
+					if (on) m.bringToFront();
+				});
+				const panel = root.querySelector<HTMLElement>('[data-vz-estado-panel]');
+				if (panel) {
+					panel.hidden = true;
+					root.querySelector('[data-vz-estado-rail]')?.replaceChildren();
+				}
+				if (currentObraId) {
+					listBtns.forEach((btn) => {
+						if (btn.getAttribute('data-vz-list') === currentObraId) btn.setAttribute('aria-pressed', 'true');
+						else btn.removeAttribute('aria-pressed');
+					});
+				}
+			});
+		});
+	}
+
+	document.addEventListener('astro:page-load', bindVzMap);
+	bindVzMap();
+</script>
+
+<style>
+	.vz-leaflet.leaflet-container {
+		background: #171717;
+		font-family: inherit;
+	}
+	:global(.vz-map-tooltip) {
+		border: 1px solid rgb(255 255 255 / 0.15) !important;
+		border-radius: 6px !important;
+		background: rgb(23 23 23 / 0.95) !important;
+		color: rgb(229 229 229) !important;
+		box-shadow: 0 8px 24px rgb(0 0 0 / 0.45) !important;
+	}
+	.vz-list-btn[aria-pressed='true'] {
+		border-color: rgb(220 38 38 / 0.55);
+		background: rgb(127 29 29 / 0.35);
+		color: rgb(254 202 202);
+	}
+</style>

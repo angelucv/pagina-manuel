@@ -1,0 +1,41 @@
+---
+import LogoMarcaApilada from './LogoMarcaApilada.astro';
+
+const links = [
+	{ href: '/', label: 'Inicio' },
+	{ href: '/sobre', label: 'Sobre' },
+	{ href: '/galeria', label: 'Galería' },
+	{ href: '/obra', label: 'Obras' },
+	{ href: '/obra-en-venezuela', label: 'Mapa interactivo' },
+	{ href: '/noticias', label: 'Noticias' },
+	{ href: '/contacto', label: 'Contacto' },
+];
+---
+
+<header class="border-b border-white/10 bg-neutral-950/80 backdrop-blur-md">
+	<div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 md:gap-4 lg:max-w-7xl">
+		<a
+			href="/"
+			class="flex min-w-0 shrink-0 items-center transition-opacity hover:opacity-90"
+			aria-label="Manuel Parada, escultor — inicio"
+		>
+			<LogoMarcaApilada />
+		</a>
+		<nav aria-label="Principal">
+			<ul class="flex flex-wrap gap-1 sm:gap-4">
+				{
+					links.map(({ href, label }) => (
+						<li>
+							<a
+								href={href}
+								class="rounded-md px-2.5 py-2 text-xs text-neutral-400 transition-colors hover:bg-white/5 hover:text-white sm:px-3 sm:text-sm lg:text-base"
+							>
+								{label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+	</div>
+</header>

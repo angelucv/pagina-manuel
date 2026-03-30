@@ -1,0 +1,102 @@
+---
+/**
+ * Marca vertical: MANUEL / Parada (brocha) / ESCULTOR.
+ * "Parada" en Permanent Marker + capas y filtro SVG para sensación de pintura, con letras bien separadas.
+ */
+interface Props {
+	class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<span class:list={['inline-block', className]}>
+	<svg
+		class="h-full w-auto max-w-[min(100%,14rem)]"
+		viewBox="0 0 260 300"
+		width="260"
+		height="300"
+		xmlns="http://www.w3.org/2000/svg"
+		aria-hidden="true"
+		focusable="false"
+	>
+		<defs>
+			<filter id="mp-brocha-borde" x="-15%" y="-15%" width="130%" height="130%">
+				<feTurbulence type="fractalNoise" baseFrequency="0.06 0.12" numOctaves="2" seed="2" result="n" />
+				<feDisplacementMap in="SourceGraphic" in2="n" scale="1.8" xChannelSelector="R" yChannelSelector="G" />
+			</filter>
+		</defs>
+
+		<!-- MANUEL -->
+		<text
+			x="130"
+			y="40"
+			text-anchor="middle"
+			fill="#a8a8a8"
+			style="font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.42em;"
+		>
+			MANUEL
+		</text>
+
+		<!-- Parada: capas para volumen tipo brocha + filtro suave -->
+		<g class="mp-brocha-capas" filter="url(#mp-brocha-borde)">
+			<text
+				x="132"
+				y="168"
+				text-anchor="middle"
+				fill="#1a1816"
+				opacity="0.35"
+				style="font-family: 'Permanent Marker', cursive; font-size: 62px; letter-spacing: 0.06em;"
+			>
+				Parada
+			</text>
+			<text
+				x="130"
+				y="166"
+				text-anchor="middle"
+				fill="#c4b8a8"
+				opacity="0.5"
+				style="font-family: 'Permanent Marker', cursive; font-size: 62px; letter-spacing: 0.06em;"
+			>
+				Parada
+			</text>
+			<text
+				x="129"
+				y="165"
+				text-anchor="middle"
+				fill="#f0ebe3"
+				style="font-family: 'Permanent Marker', cursive; font-size: 62px; letter-spacing: 0.06em;"
+			>
+				Parada
+			</text>
+			<text
+				x="130"
+				y="164"
+				text-anchor="middle"
+				fill="#faf8f5"
+				style="font-family: 'Permanent Marker', cursive; font-size: 62px; letter-spacing: 0.06em;"
+			>
+				Parada
+			</text>
+		</g>
+
+		<!-- ESCULTOR -->
+		<text
+			x="130"
+			y="278"
+			text-anchor="middle"
+			fill="#a8a8a8"
+			style="font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.38em;"
+		>
+			ESCULTOR
+		</text>
+	</svg>
+</span>
+
+<style is:global>
+	@media (prefers-reduced-motion: reduce) {
+		.mp-brocha-capas {
+			filter: none !important;
+		}
+	}
+</style>
