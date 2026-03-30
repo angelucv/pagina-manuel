@@ -67,7 +67,6 @@
 	.home-wall-layer {
 		-webkit-backface-visibility: hidden;
 		backface-visibility: hidden;
-		transform: translateZ(0);
 	}
 
 	.home-wall-layer--a {

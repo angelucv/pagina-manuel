@@ -213,6 +213,7 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 				return;
 			}
 			mosaicIntervalId = window.setInterval(tick, MOSAIC_MS);
+			queueMicrotask(tick);
 		};
 
 		arm();
@@ -232,7 +233,14 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 
 	document.addEventListener('astro:page-load', scheduleMosaicInit);
 	document.addEventListener('DOMContentLoaded', scheduleMosaicInit);
+	window.addEventListener('load', scheduleMosaicInit);
+	window.addEventListener('pageshow', scheduleMosaicInit);
+	document.addEventListener('visibilitychange', () => {
+		if (!document.hidden) scheduleMosaicInit();
+	});
 	scheduleMosaicInit();
+	window.setTimeout(scheduleMosaicInit, 400);
+	window.setTimeout(scheduleMosaicInit, 1200);
 </script>
 
 <style>
@@ -422,6 +430,7 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		grid-template-columns: minmax(0, 1fr);
 		width: 100%;
 		height: auto;
+		isolation: isolate;
 		transform: scale(1);
 		filter: drop-shadow(0 6px 14px rgb(0 0 0 / 0.45)) drop-shadow(0 1px 2px rgb(0 0 0 / 0.35));
 		transition:
