@@ -64,6 +64,12 @@
 		transform-origin: 50% 80%;
 	}
 
+	.home-wall-layer {
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
+		transform: translateZ(0);
+	}
+
 	.home-wall-layer--a {
 		animation: mp-home-xfade-a 36s ease-in-out infinite;
 		animation-delay: calc(var(--breathe, 0) * -4.25s);
@@ -76,14 +82,14 @@
 		will-change: opacity;
 	}
 
-	/* Móvil: crossfade un poco más rápido para que se perciba mejor. */
+	/* Móvil: crossfade más corto para que se note en Safari / Chrome. */
 	@media (max-width: 767.98px) {
 		.home-wall-layer--a {
-			animation-duration: 22s;
+			animation-duration: 14s;
 		}
 
 		.home-wall-layer--b {
-			animation-duration: 22s;
+			animation-duration: 14s;
 		}
 	}
 
