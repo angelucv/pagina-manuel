@@ -32,10 +32,10 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 }
 ---
 
-{
-	photos.length > 0 && (
+	{
+		photos.length > 0 && (
 		<section
-			class="home-wall-section relative w-full"
+			class="home-wall-section relative w-full pb-2 sm:pb-3"
 			aria-label="Selección de obra"
 			id="home-wall-section"
 		>
@@ -206,26 +206,46 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 
 	@keyframes mp-wall-ambient {
 		0%,
-		86%,
+		78%,
 		100% {
 			opacity: 0;
 		}
-		88%,
-		92% {
+		82%,
+		90% {
 			opacity: 1;
 		}
 	}
 
-	@media (max-width: 767.98px) {
-		@media (prefers-reduced-motion: no-preference) {
-			.home-wall-ambient-pulse {
-				background: radial-gradient(
-					ellipse 85% 75% at 50% 42%,
-					rgb(255 255 255 / 0.2),
-					transparent 62%
-				);
-				animation: mp-wall-ambient 6s ease-in-out infinite;
-			}
+	/* Pulso luminoso en todo dispositivo (solo CSS; WebView-safe con -webkit-). */
+	@media (prefers-reduced-motion: no-preference) {
+		.home-wall-ambient-pulse {
+			background: radial-gradient(
+				ellipse 88% 78% at 50% 42%,
+				rgb(255 255 255 / 0.32),
+				transparent 62%
+			);
+			-webkit-animation: mp-wall-ambient 4.5s ease-in-out infinite;
+			animation: mp-wall-ambient 4.5s ease-in-out infinite;
+		}
+
+		.home-wall-section {
+			outline: 2px solid transparent;
+			outline-offset: 6px;
+			border-radius: 10px;
+			-webkit-animation: mp-wall-outline-hint 6s ease-in-out infinite;
+			animation: mp-wall-outline-hint 6s ease-in-out infinite;
+		}
+	}
+
+	@keyframes mp-wall-outline-hint {
+		0%,
+		87%,
+		100% {
+			outline-color: transparent;
+		}
+		89%,
+		93% {
+			outline-color: rgb(251 191 36 / 0.4);
 		}
 	}
 
@@ -686,7 +706,14 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 	}
 
 	@media (prefers-reduced-motion: reduce) {
+		.home-wall-section {
+			-webkit-animation: none !important;
+			animation: none !important;
+			outline: none !important;
+		}
+
 		.home-wall-ambient-pulse {
+			-webkit-animation: none !important;
 			animation: none !important;
 			opacity: 0 !important;
 		}

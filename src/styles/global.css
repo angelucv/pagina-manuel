@@ -59,7 +59,9 @@
 
 @media (prefers-reduced-motion: no-preference) {
 	.home-wall-breathe {
+		-webkit-animation: mp-home-place-in 1.12s cubic-bezier(0.25, 0.9, 0.3, 1.15) backwards;
 		animation: mp-home-place-in 1.12s cubic-bezier(0.25, 0.9, 0.3, 1.15) backwards;
+		-webkit-animation-delay: calc(var(--breathe, 0) * 0.14s);
 		animation-delay: calc(var(--breathe, 0) * 0.14s);
 		transform-origin: 50% 80%;
 	}
@@ -70,25 +72,31 @@
 	}
 
 	.home-wall-layer--a {
+		-webkit-animation: mp-home-xfade-a 36s ease-in-out infinite;
 		animation: mp-home-xfade-a 36s ease-in-out infinite;
+		-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
 		animation-delay: calc(var(--breathe, 0) * -4.25s);
 		will-change: opacity;
 	}
 
 	.home-wall-layer--b {
+		-webkit-animation: mp-home-xfade-b 36s ease-in-out infinite;
 		animation: mp-home-xfade-b 36s ease-in-out infinite;
+		-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
 		animation-delay: calc(var(--breathe, 0) * -4.25s);
 		will-change: opacity;
 	}
 
-	/* Móvil: crossfade más corto para que se note en Safari / Chrome. */
+	/* Móvil: crossfade más corto (Safari / WebView). */
 	@media (max-width: 767.98px) {
 		.home-wall-layer--a {
-			animation-duration: 14s;
+			-webkit-animation-duration: 12s;
+			animation-duration: 12s;
 		}
 
 		.home-wall-layer--b {
-			animation-duration: 14s;
+			-webkit-animation-duration: 12s;
+			animation-duration: 12s;
 		}
 	}
 
@@ -108,11 +116,13 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.home-wall-breathe {
+		-webkit-animation: none !important;
 		animation: none !important;
 	}
 
 	.home-wall-layer--a,
 	.home-wall-layer--b {
+		-webkit-animation: none !important;
 		animation: none !important;
 		will-change: auto;
 	}
