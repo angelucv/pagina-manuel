@@ -84,8 +84,7 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 				var MOSAIC_COUNT = 3;
 				var mosaicIntervalId = 0;
 				/**
-				 * Crossfade robusto: alterna visibility + z-index por JS (sin opacity CSS ni transitions).
-				 * WebKit móvil / in-app a menudo ignoran animaciones en capas del muro.
+				 * Alternancia de fotos: cambia img.src (misma <img>). No usa opacity ni CSS; funciona en WebView / móvil.
 				 */
 				var XF_MS = 4500;
 				var xfIntervalId = 0;
@@ -98,86 +97,53 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 					}
 				}
 
-				function clearXfCrossfade() {
+				function clearWallImgSwap() {
 					if (xfIntervalId) {
 						window.clearInterval(xfIntervalId);
 						xfIntervalId = 0;
 					}
 				}
 
-				function clearXfLayerInline(root) {
-					var la = root.querySelector('.home-wall-layer--a');
-					var lb = root.querySelector('.home-wall-layer--b');
-					if (la) {
-						la.style.removeProperty('visibility');
-						la.style.removeProperty('z-index');
-						la.removeAttribute('aria-hidden');
-					}
-					if (lb) {
-						lb.style.removeProperty('visibility');
-						lb.style.removeProperty('z-index');
-						lb.removeAttribute('aria-hidden');
-					}
-				}
-
-				function shouldUseJsCrossfade() {
-					if (!document.querySelector('[data-mp-crossfade]')) return false;
-					if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
-					/* Cualquier pantalla táctil: forzar JS (evita puntero "fine" mal reportado en WebViews). */
-					if (typeof navigator !== 'undefined' && Number(navigator.maxTouchPoints) > 0) return true;
-					var fineDesktop =
-						window.matchMedia('(hover: hover)').matches &&
-						window.matchMedia('(pointer: fine)').matches &&
-						window.matchMedia('(min-width: 768px)').matches &&
-						!window.matchMedia('(any-pointer: coarse)').matches;
-					return !fineDesktop;
-				}
-
-				function applyXfVisibility(root, showB) {
-					var la = root.querySelector('.home-wall-layer--a');
-					var lb = root.querySelector('.home-wall-layer--b');
-					if (!la || !lb) return;
-					if (showB) {
-						la.style.setProperty('visibility', 'hidden');
-						lb.style.setProperty('visibility', 'visible');
-						la.style.setProperty('z-index', '1');
-						lb.style.setProperty('z-index', '2');
-						la.setAttribute('aria-hidden', 'true');
-						lb.setAttribute('aria-hidden', 'false');
-					} else {
-						la.style.setProperty('visibility', 'visible');
-						lb.style.setProperty('visibility', 'hidden');
-						la.style.setProperty('z-index', '2');
-						lb.style.setProperty('z-index', '1');
-						la.setAttribute('aria-hidden', 'false');
-						lb.setAttribute('aria-hidden', 'true');
-					}
-				}
-
-				function tickXfCrossfade() {
+				function tickWallImgSwap() {
 					xfSeq += 1;
-					document.querySelectorAll('[data-mp-crossfade].mp-xf--js-driven').forEach(function (node, idx) {
+					document.querySelectorAll('[data-mp-crossfade][data-mp-src-a][data-mp-src-b]').forEach(function (node, idx) {
 						var tile = node.closest('.home-wall-tile');
 						if (tile && tile.getAttribute('aria-pressed') === 'true') return;
+						var img = node.querySelector('img');
+						if (!img) return;
+						var a = node.getAttribute('data-mp-src-a');
+						var b = node.getAttribute('data-mp-src-b');
+						if (!a || !b || a === b) return;
 						var showB = ((xfSeq + idx) % 2) === 1;
-						applyXfVisibility(node, showB);
+						var next = showB ? b : a;
+						img.setAttribute('src', next);
 					});
 				}
 
-				function initJsCrossfade() {
-					clearXfCrossfade();
-					document.querySelectorAll('[data-mp-crossfade]').forEach(function (n) {
-						n.classList.remove('mp-xf--js-driven');
-						clearXfLayerInline(n);
-					});
-					if (!shouldUseJsCrossfade()) return;
-					document.querySelectorAll('[data-mp-crossfade]').forEach(function (n, idx) {
-						n.classList.add('mp-xf--js-driven');
-						applyXfVisibility(n, ((0 + idx) % 2) === 1);
+				function initWallImgSwap() {
+					clearWallImgSwap();
+					var nodes = document.querySelectorAll('[data-mp-crossfade][data-mp-src-a][data-mp-src-b]');
+					if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+						nodes.forEach(function (node) {
+							var img = node.querySelector('img');
+							var a = node.getAttribute('data-mp-src-a');
+							if (img && a) img.setAttribute('src', a);
+						});
+						return;
+					}
+					if (!nodes.length) return;
+					nodes.forEach(function (node) {
+						var a = node.getAttribute('data-mp-src-a');
+						var b = node.getAttribute('data-mp-src-b');
+						if (!a || !b || a === b) return;
+						var p1 = new Image();
+						p1.src = a;
+						var p2 = new Image();
+						p2.src = b;
 					});
 					xfSeq = 0;
-					xfIntervalId = window.setInterval(tickXfCrossfade, XF_MS);
-					window.setTimeout(tickXfCrossfade, 700);
+					xfIntervalId = window.setInterval(tickWallImgSwap, XF_MS);
+					window.setTimeout(tickWallImgSwap, 700);
 				}
 
 				function initHomeWallOnce() {
@@ -251,7 +217,7 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 					window.__mpMosaicPrm = true;
 					window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function () {
 						initMosaicRotate();
-						initJsCrossfade();
+						initWallImgSwap();
 					});
 				}
 
@@ -259,7 +225,7 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 					window.requestAnimationFrame(function () {
 						window.requestAnimationFrame(function () {
 							initMosaicRotate();
-							initJsCrossfade();
+							initWallImgSwap();
 						});
 					});
 				}

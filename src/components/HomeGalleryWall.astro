@@ -74,31 +74,22 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 								>
 									<span class="home-wall-breathe" aria-hidden="true">
 										{dual ? (
-											<span class="home-wall-crossfade" data-mp-crossfade>
-												<span class="home-wall-layer home-wall-layer--a">
-													<img
-														src={a}
-														alt=""
-														loading={i < 2 ? 'eager' : 'lazy'}
-														decoding="async"
-														width="900"
-														height="700"
-														class="home-wall-layer-img"
-														draggable="false"
-													/>
-												</span>
-												<span class="home-wall-layer home-wall-layer--b">
-													<img
-														src={b}
-														alt=""
-														loading="lazy"
-														decoding="async"
-														width="900"
-														height="700"
-														class="home-wall-layer-img"
-														draggable="false"
-													/>
-												</span>
+											<span
+												class="home-wall-crossfade"
+												data-mp-crossfade
+												data-mp-src-a={a}
+												data-mp-src-b={b}
+											>
+												<img
+													src={a}
+													alt=""
+													loading={i < 2 ? 'eager' : 'lazy'}
+													decoding="async"
+													width="900"
+													height="700"
+													class="home-wall-xf-img"
+													draggable="false"
+												/>
 											</span>
 										) : (
 											<img
@@ -152,36 +143,6 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 			opacity: 1;
 			transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
 			filter: blur(0);
-		}
-	}
-
-	@keyframes mp-home-xfade-a {
-		0%,
-		32% {
-			opacity: 1;
-		}
-		40%,
-		82% {
-			opacity: 0;
-		}
-		90%,
-		100% {
-			opacity: 1;
-		}
-	}
-
-	@keyframes mp-home-xfade-b {
-		0%,
-		32% {
-			opacity: 0;
-		}
-		40%,
-		82% {
-			opacity: 1;
-		}
-		90%,
-		100% {
-			opacity: 0;
 		}
 	}
 
@@ -395,21 +356,7 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 			filter 0.45s ease;
 	}
 
-	/* Capas = <span>; la opacidad animada no va en <img> (WebKit móvil / WebView suele ignorarla). */
-	.home-wall-layer {
-		grid-column: 1;
-		grid-row: 1;
-		display: block;
-		width: 100%;
-		max-width: 100%;
-		height: auto;
-		-webkit-backface-visibility: hidden;
-		backface-visibility: hidden;
-		-webkit-transform: translateZ(0);
-		transform: translateZ(0);
-	}
-
-	.home-wall-layer-img {
+	.home-wall-xf-img {
 		display: block;
 		width: 100%;
 		max-width: 100%;
@@ -427,69 +374,6 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		-webkit-animation-delay: calc(var(--breathe, 0) * 0.14s);
 		animation-delay: calc(var(--breathe, 0) * 0.14s);
 		transform-origin: 50% 80%;
-	}
-
-	/* Solo escritorio ancho + ratón: keyframes. En viewport estrecho o táctil va JS + transition. */
-	@media (hover: hover) and (pointer: fine) and (min-width: 768px) {
-		.home-wall-layer--a {
-			-webkit-animation: mp-home-xfade-a 36s ease-in-out infinite;
-			animation: mp-home-xfade-a 36s ease-in-out infinite;
-			-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
-			animation-delay: calc(var(--breathe, 0) * -4.25s);
-			will-change: opacity;
-		}
-
-		.home-wall-layer--b {
-			-webkit-animation: mp-home-xfade-b 36s ease-in-out infinite;
-			animation: mp-home-xfade-b 36s ease-in-out infinite;
-			-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
-			animation-delay: calc(var(--breathe, 0) * -4.25s);
-			will-change: opacity;
-		}
-
-		.home-wall-tile:hover .home-wall-layer--a,
-		.home-wall-tile:hover .home-wall-layer--b {
-			-webkit-animation-play-state: paused;
-			animation-play-state: paused;
-		}
-	}
-
-	.home-wall-tile[aria-pressed='true'] .home-wall-layer--a,
-	.home-wall-tile[aria-pressed='true'] .home-wall-layer--b {
-		-webkit-animation-play-state: paused;
-		animation-play-state: paused;
-	}
-
-	/*
-	 * Táctil / WebView: sin keyframes. Antes de JS: solo capa A (B invisible por opacity).
-	 * Con .mp-xf--js-driven: JS alterna visibility + z-index (no depende de opacity ni transition).
-	 */
-	@media (max-width: 767.98px), (hover: none), (pointer: coarse) {
-		.home-wall-crossfade[data-mp-crossfade]:not(.mp-xf--js-driven) .home-wall-layer--a,
-		.home-wall-crossfade[data-mp-crossfade]:not(.mp-xf--js-driven) .home-wall-layer--b {
-			-webkit-animation: none !important;
-			animation: none !important;
-			will-change: auto;
-		}
-
-		.home-wall-crossfade[data-mp-crossfade]:not(.mp-xf--js-driven) .home-wall-layer--a {
-			opacity: 1;
-		}
-
-		.home-wall-crossfade[data-mp-crossfade]:not(.mp-xf--js-driven) .home-wall-layer--b {
-			opacity: 0;
-		}
-
-		.home-wall-crossfade.mp-xf--js-driven .home-wall-layer--a,
-		.home-wall-crossfade.mp-xf--js-driven .home-wall-layer--b {
-			-webkit-animation: none !important;
-			animation: none !important;
-			-webkit-transition: none !important;
-			transition: none !important;
-			opacity: 1 !important;
-			will-change: auto;
-			position: relative;
-		}
 	}
 
 	.home-wall-img--single {
@@ -840,17 +724,6 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		.home-wall-breathe {
 			-webkit-animation: none !important;
 			animation: none !important;
-		}
-
-		.home-wall-layer--a,
-		.home-wall-layer--b {
-			-webkit-animation: none !important;
-			animation: none !important;
-			will-change: auto;
-		}
-
-		.home-wall-layer--b {
-			opacity: 0 !important;
 		}
 
 		.home-wall-section {
