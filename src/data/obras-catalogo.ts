@@ -62,6 +62,14 @@ export const categoriasObras: CategoriaObras[] = [
 				detalles:
 					'En homenaje al perro que rescató decenas de personas en la tragedia de Vargas (1999). Materiales: resina y fibra de vidrio; altura aprox. 2,05 m; base de roca natural alusiva al deslave. Inauguración septiembre 2024. Proyecto con larga gestación previa.',
 			},
+			{
+				titulo: 'Plaza / monumento a José García Carneiro',
+				tipo: 'Monumento escultórico / conjunto urbano',
+				año: '2023',
+				lugar: 'La Guaira (estado La Guaira / Vargas).',
+				detalles:
+					'Inaugurado en mayo de 2023, en conmemoración de los dos años de la siembra del político y militar. Nota de prensa: Ciudad CCS — https://www.ciudadccs.info/publicacion/7195-develan-monumento-en-honor-a-jose-garcia-carneiro-en-la-guaira',
+			},
 		],
 	},
 	{

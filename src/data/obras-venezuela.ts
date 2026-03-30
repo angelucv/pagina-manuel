@@ -4,7 +4,7 @@
  *
  * Referencias de coordenadas (aprox.): iglesia del Rosario Baruta (Wikipedia / GeoHack);
  * Iglesia de Manzanares Baruta (Wikimapia); Ciudad Universitaria FHE–Psicología (mapas UCV);
- * Tanaguarena / plaza Las Palmeras (litoral Vargas); casco de La Guaira / Plaza Vargas (guías urbanas).
+ * Tanaguarena / plaza Las Palmeras (litoral Vargas); casco de La Guaira (plaza García Carneiro — referencia urbana).
  * Ajustar con GPS en sitio si hace falta precisión de metro.
  */
 export type ObraNacional = {
@@ -76,14 +76,14 @@ export const obrasVenezuela: ObraNacional[] = [
 		lng: -66.81835,
 	},
 	{
-		id: 'vargas-casco-la-guaira',
-		titulo: 'Obra en casco histórico de La Guaira',
-		lugar: 'Casco colonial, La Guaira (Vargas).',
+		id: 'vargas-plaza-garcia-carneiro',
+		titulo: 'Plaza / monumento a José García Carneiro',
+		lugar: 'La Guaira, casco y entorno urbano del municipio Vargas.',
 		estadoMapa: 'Vargas',
 		descripcion:
-			'Segunda ubicación en el litoral en inventario del sitio: escultura(s) en el casco. Punto de referencia zona Plaza Vargas / entorno colonial; precisar título y sede exacta con documentación del taller.',
+			'Obra escultórica vinculada a la plaza en honor al político y militar (inauguración mayo 2023). Punto aproximado en el casco de La Guaira; afinar con GPS en sitio. Prensa: Ciudad CCS — ciudadccs.info/publicacion/7195-develan-monumento-en-honor-a-jose-garcia-carneiro-en-la-guaira',
 		imagen: '/Fotos/6.png',
-		lat: 10.59965,
-		lng: -66.93425,
+		lat: 10.6001,
+		lng: -66.9336,
 	},
 ];
