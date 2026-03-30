@@ -83,7 +83,10 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 				var MOSAIC_MS = 6000;
 				var MOSAIC_COUNT = 3;
 				var mosaicIntervalId = 0;
-				/** Crossfade táctil/WebView: transition + clase (CSS keyframes en <span> fallan a veces en móvil). */
+				/**
+				 * Crossfade robusto: alterna visibility + z-index por JS (sin opacity CSS ni transitions).
+				 * WebKit móvil / in-app a menudo ignoran animaciones en capas del muro.
+				 */
 				var XF_MS = 4500;
 				var xfIntervalId = 0;
 				var xfSeq = 0;
@@ -102,33 +105,76 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 					}
 				}
 
+				function clearXfLayerInline(root) {
+					var la = root.querySelector('.home-wall-layer--a');
+					var lb = root.querySelector('.home-wall-layer--b');
+					if (la) {
+						la.style.removeProperty('visibility');
+						la.style.removeProperty('z-index');
+						la.removeAttribute('aria-hidden');
+					}
+					if (lb) {
+						lb.style.removeProperty('visibility');
+						lb.style.removeProperty('z-index');
+						lb.removeAttribute('aria-hidden');
+					}
+				}
+
 				function shouldUseJsCrossfade() {
 					if (!document.querySelector('[data-mp-crossfade]')) return false;
 					if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
-					var useCssKeyframes =
+					/* Cualquier pantalla táctil: forzar JS (evita puntero "fine" mal reportado en WebViews). */
+					if (typeof navigator !== 'undefined' && Number(navigator.maxTouchPoints) > 0) return true;
+					var fineDesktop =
 						window.matchMedia('(hover: hover)').matches &&
 						window.matchMedia('(pointer: fine)').matches &&
-						window.matchMedia('(min-width: 768px)').matches;
-					return !useCssKeyframes;
+						window.matchMedia('(min-width: 768px)').matches &&
+						!window.matchMedia('(any-pointer: coarse)').matches;
+					return !fineDesktop;
+				}
+
+				function applyXfVisibility(root, showB) {
+					var la = root.querySelector('.home-wall-layer--a');
+					var lb = root.querySelector('.home-wall-layer--b');
+					if (!la || !lb) return;
+					if (showB) {
+						la.style.setProperty('visibility', 'hidden');
+						lb.style.setProperty('visibility', 'visible');
+						la.style.setProperty('z-index', '1');
+						lb.style.setProperty('z-index', '2');
+						la.setAttribute('aria-hidden', 'true');
+						lb.setAttribute('aria-hidden', 'false');
+					} else {
+						la.style.setProperty('visibility', 'visible');
+						lb.style.setProperty('visibility', 'hidden');
+						la.style.setProperty('z-index', '2');
+						lb.style.setProperty('z-index', '1');
+						la.setAttribute('aria-hidden', 'false');
+						lb.setAttribute('aria-hidden', 'true');
+					}
 				}
 
 				function tickXfCrossfade() {
 					xfSeq += 1;
-					document.querySelectorAll('[data-mp-crossfade]').forEach(function (node, idx) {
+					document.querySelectorAll('[data-mp-crossfade].mp-xf--js-driven').forEach(function (node, idx) {
 						var tile = node.closest('.home-wall-tile');
 						if (tile && tile.getAttribute('aria-pressed') === 'true') return;
 						var showB = ((xfSeq + idx) % 2) === 1;
-						if (showB) node.classList.add('mp-js-xf-b');
-						else node.classList.remove('mp-js-xf-b');
+						applyXfVisibility(node, showB);
 					});
 				}
 
 				function initJsCrossfade() {
 					clearXfCrossfade();
 					document.querySelectorAll('[data-mp-crossfade]').forEach(function (n) {
-						n.classList.remove('mp-js-xf-b');
+						n.classList.remove('mp-xf--js-driven');
+						clearXfLayerInline(n);
 					});
 					if (!shouldUseJsCrossfade()) return;
+					document.querySelectorAll('[data-mp-crossfade]').forEach(function (n, idx) {
+						n.classList.add('mp-xf--js-driven');
+						applyXfVisibility(n, ((0 + idx) % 2) === 1);
+					});
 					xfSeq = 0;
 					xfIntervalId = window.setInterval(tickXfCrossfade, XF_MS);
 					window.setTimeout(tickXfCrossfade, 700);

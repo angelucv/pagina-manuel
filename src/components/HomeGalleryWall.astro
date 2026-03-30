@@ -461,32 +461,34 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 	}
 
 	/*
-	 * Táctil, WebView o ventana estrecha: transition + clase (JS en BaseLayout).
+	 * Táctil / WebView: sin keyframes. Antes de JS: solo capa A (B invisible por opacity).
+	 * Con .mp-xf--js-driven: JS alterna visibility + z-index (no depende de opacity ni transition).
 	 */
 	@media (max-width: 767.98px), (hover: none), (pointer: coarse) {
-		.home-wall-crossfade[data-mp-crossfade] .home-wall-layer--a,
-		.home-wall-crossfade[data-mp-crossfade] .home-wall-layer--b {
+		.home-wall-crossfade[data-mp-crossfade]:not(.mp-xf--js-driven) .home-wall-layer--a,
+		.home-wall-crossfade[data-mp-crossfade]:not(.mp-xf--js-driven) .home-wall-layer--b {
 			-webkit-animation: none !important;
 			animation: none !important;
-			will-change: opacity;
-			-webkit-transition: opacity 0.95s ease-in-out;
-			transition: opacity 0.95s ease-in-out;
+			will-change: auto;
 		}
 
-		.home-wall-crossfade[data-mp-crossfade] .home-wall-layer--a {
+		.home-wall-crossfade[data-mp-crossfade]:not(.mp-xf--js-driven) .home-wall-layer--a {
 			opacity: 1;
 		}
 
-		.home-wall-crossfade[data-mp-crossfade] .home-wall-layer--b {
+		.home-wall-crossfade[data-mp-crossfade]:not(.mp-xf--js-driven) .home-wall-layer--b {
 			opacity: 0;
 		}
 
-		.home-wall-crossfade[data-mp-crossfade].mp-js-xf-b .home-wall-layer--a {
-			opacity: 0;
-		}
-
-		.home-wall-crossfade[data-mp-crossfade].mp-js-xf-b .home-wall-layer--b {
-			opacity: 1;
+		.home-wall-crossfade.mp-xf--js-driven .home-wall-layer--a,
+		.home-wall-crossfade.mp-xf--js-driven .home-wall-layer--b {
+			-webkit-animation: none !important;
+			animation: none !important;
+			-webkit-transition: none !important;
+			transition: none !important;
+			opacity: 1 !important;
+			will-change: auto;
+			position: relative;
 		}
 	}
 
