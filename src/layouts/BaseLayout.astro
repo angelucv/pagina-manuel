@@ -77,6 +77,117 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 				<p class="text-center text-xs text-neutral-600">Manuel Parada · escultor</p>
 			</div>
 		</footer>
+		<!-- Script clásico (no ES module): WebView de WhatsApp / in-app a veces no ejecuta type=module. -->
+		<script is:inline>
+			(function () {
+				var MOSAIC_MS = 6000;
+				var MOSAIC_COUNT = 3;
+				var mosaicIntervalId = 0;
+
+				function clearMosaicInterval() {
+					if (mosaicIntervalId) {
+						window.clearInterval(mosaicIntervalId);
+						mosaicIntervalId = 0;
+					}
+				}
+
+				function initHomeWallOnce() {
+					if (window.__mpHomeWallDelegated) return;
+					window.__mpHomeWallDelegated = true;
+					document.addEventListener(
+						'click',
+						function (e) {
+							var root = document.getElementById('home-wall-section');
+							if (!root) return;
+							if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+							var wall = root.querySelector('[data-home-wall]');
+							if (!wall) return;
+							var t = e.target && e.target.closest && e.target.closest('.home-wall-tile');
+							if (t && wall.contains(t)) {
+								var on = t.getAttribute('aria-pressed') === 'true';
+								wall.querySelectorAll('.home-wall-tile').forEach(function (b) {
+									b.setAttribute('aria-pressed', 'false');
+								});
+								if (!on) t.setAttribute('aria-pressed', 'true');
+								return;
+							}
+							wall.querySelectorAll('.home-wall-tile').forEach(function (b) {
+								b.setAttribute('aria-pressed', 'false');
+							});
+						},
+						true,
+					);
+				}
+
+				function initMosaicRotate() {
+					clearMosaicInterval();
+					var grid = document.querySelector('[data-mosaic-root]');
+					if (!grid) return;
+					var photoCount = Number(grid.dataset.photoCount || '0');
+					if (photoCount < 8) grid.dataset.mosaicLayout = '0';
+
+					function tick() {
+						var g = document.querySelector('[data-mosaic-root]');
+						if (!g) return;
+						var n = Number(g.dataset.photoCount || '0');
+						if (n >= 8) {
+							var cur = Number(g.dataset.mosaicLayout || '0');
+							g.dataset.mosaicLayout = String((cur + 1) % MOSAIC_COUNT);
+						}
+						var board = g.closest('[data-cork-board]');
+						if (board && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+							board.classList.add('home-wall-cork-board--repin');
+							window.setTimeout(function () {
+								board.classList.remove('home-wall-cork-board--repin');
+							}, 420);
+						}
+					}
+
+					function arm() {
+						clearMosaicInterval();
+						var g = document.querySelector('[data-mosaic-root]');
+						if (!g) return;
+						if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+							g.dataset.mosaicLayout = '0';
+							return;
+						}
+						mosaicIntervalId = window.setInterval(tick, MOSAIC_MS);
+						if (typeof queueMicrotask === 'function') queueMicrotask(tick);
+						else window.setTimeout(tick, 0);
+					}
+					arm();
+				}
+
+				if (!window.__mpMosaicPrm) {
+					window.__mpMosaicPrm = true;
+					window
+						.matchMedia('(prefers-reduced-motion: reduce)')
+						.addEventListener('change', initMosaicRotate);
+				}
+
+				function scheduleMosaicInit() {
+					window.requestAnimationFrame(function () {
+						window.requestAnimationFrame(initMosaicRotate);
+					});
+				}
+
+				function bootHomeWall() {
+					initHomeWallOnce();
+					scheduleMosaicInit();
+				}
+
+				document.addEventListener('astro:page-load', bootHomeWall);
+				document.addEventListener('DOMContentLoaded', bootHomeWall);
+				window.addEventListener('load', bootHomeWall);
+				window.addEventListener('pageshow', bootHomeWall);
+				document.addEventListener('visibilitychange', function () {
+					if (!document.hidden) scheduleMosaicInit();
+				});
+				bootHomeWall();
+				window.setTimeout(bootHomeWall, 400);
+				window.setTimeout(bootHomeWall, 1200);
+			})();
+		</script>
 		<script is:inline>
 			(function () {
 				if (typeof window === 'undefined') return;
