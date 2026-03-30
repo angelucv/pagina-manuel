@@ -40,6 +40,13 @@ export const categoriasObras: CategoriaObras[] = [
 				detalles:
 					'Contexto del aniversario de su fallecimiento y devoción nacional al «Médico de los pobres». Actos con autoridades municipales y eclesiásticas.',
 			},
+			{
+				titulo: 'Iglesia de Manzanares',
+				tipo: 'Escultura / imagen devocional',
+				lugar: 'Templo de la urbanización Manzanares, municipio Baruta (Miranda).',
+				detalles:
+					'Incluida en el mapa del sitio con el casco baruteño y el litoral. Completar año y denominación exacta de la pieza con el archivo del taller.',
+			},
 		],
 	},
 	{
