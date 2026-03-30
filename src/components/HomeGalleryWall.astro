@@ -46,8 +46,9 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 						photos.length >= 2 && (
 							<span class="mt-2 block max-w-prose font-normal normal-case leading-relaxed tracking-normal text-neutral-500">
 								Fotos sujetas con chincheta sobre corcho; cada pieza alterna dos vistas (en móvil el cambio es un poco
-								más ágil). Cada 6 s el tablero reordena el mosaico; si tu teléfono tiene «reducir movimiento»
-								activado, las animaciones se desactivan.
+								más ágil). Cada 6 s hay un pulso en el tablero; con 8 o más fotos el mosaico también cambia de
+								disposición. Si tu teléfono tiene «reducir movimiento» activado, las animaciones se respetan y se
+								apagan.
 							</span>
 						)
 					}
@@ -172,10 +173,9 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		if (!grid || grid.dataset.mosaicRotateBound === '1') return;
 		grid.dataset.mosaicRotateBound = '1';
 
-		const photoCount = Number(grid.dataset.photoCount || '8');
+		const photoCount = Number(grid.dataset.photoCount || '0');
 		if (photoCount < 8) {
 			grid.dataset.mosaicLayout = '0';
-			return;
 		}
 
 		let tid = 0;
@@ -188,8 +188,10 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		};
 
 		const tick = () => {
-			const cur = Number(grid.dataset.mosaicLayout || 0);
-			grid.dataset.mosaicLayout = String((cur + 1) % MOSAIC_COUNT);
+			if (photoCount >= 8) {
+				const cur = Number(grid.dataset.mosaicLayout || 0);
+				grid.dataset.mosaicLayout = String((cur + 1) % MOSAIC_COUNT);
+			}
 			const board = grid.closest('[data-cork-board]');
 			if (board instanceof HTMLElement && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 				board.classList.add('home-wall-cork-board--repin');
