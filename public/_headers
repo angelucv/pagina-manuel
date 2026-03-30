@@ -1,0 +1,6 @@
+# Home: revalidate HTML often (copy and meta stay current).
+/
+	Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+	Cache-Control: public, max-age=0, must-revalidate
