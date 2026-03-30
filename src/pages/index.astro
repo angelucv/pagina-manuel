@@ -33,6 +33,28 @@ const logosGaleria = [
 
 			<HomeGalleryWall />
 
+			<!-- Reintenta el swap de fotos cuando ya existe __mpInitWallImgSwap (script del layout va después en el DOM). -->
+			<script is:inline>
+				(function () {
+					var n = 0;
+					function retry() {
+						n++;
+						if (typeof window.__mpInitWallImgSwap === 'function') {
+							window.__mpInitWallImgSwap();
+							window.setTimeout(function () {
+								window.__mpInitWallImgSwap();
+							}, 900);
+							window.setTimeout(function () {
+								window.__mpInitWallImgSwap();
+							}, 3200);
+							return;
+						}
+						if (n < 120) window.setTimeout(retry, 40);
+					}
+					retry();
+				})();
+			</script>
+
 			<nav
 				class="mx-auto max-w-3xl border-t border-white/10 px-0 pb-2 pt-8 text-left sm:pb-3 sm:pt-10"
 				aria-label="Secciones del sitio"

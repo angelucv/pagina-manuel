@@ -86,8 +86,9 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 				/**
 				 * Alternancia de fotos: cambia img.src (misma <img>). No usa opacity ni CSS; funciona en WebView / móvil.
 				 */
-				var XF_MS = 4500;
+				var XF_MS = 4000;
 				var xfIntervalId = 0;
+				var xfArmTimeoutId = 0;
 				var xfSeq = 0;
 
 				function clearMosaicInterval() {
@@ -101,6 +102,10 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 					if (xfIntervalId) {
 						window.clearInterval(xfIntervalId);
 						xfIntervalId = 0;
+					}
+					if (xfArmTimeoutId) {
+						window.clearTimeout(xfArmTimeoutId);
+						xfArmTimeoutId = 0;
 					}
 				}
 
@@ -116,22 +121,15 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 						if (!a || !b || a === b) return;
 						var showB = ((xfSeq + idx) % 2) === 1;
 						var next = showB ? b : a;
-						img.setAttribute('src', next);
+						img.src = next;
 					});
 				}
 
 				function initWallImgSwap() {
 					clearWallImgSwap();
 					var nodes = document.querySelectorAll('[data-mp-crossfade][data-mp-src-a][data-mp-src-b]');
-					if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-						nodes.forEach(function (node) {
-							var img = node.querySelector('img');
-							var a = node.getAttribute('data-mp-src-a');
-							if (img && a) img.setAttribute('src', a);
-						});
-						return;
-					}
 					if (!nodes.length) return;
+					/* No desactivar por prefers-reduced-motion: en Android “quitar animaciones” lo activa y el usuario no veía cambio. */
 					nodes.forEach(function (node) {
 						var a = node.getAttribute('data-mp-src-a');
 						var b = node.getAttribute('data-mp-src-b');
@@ -143,7 +141,23 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 					});
 					xfSeq = 0;
 					xfIntervalId = window.setInterval(tickWallImgSwap, XF_MS);
-					window.setTimeout(tickWallImgSwap, 700);
+					xfArmTimeoutId = window.setTimeout(function () {
+						xfArmTimeoutId = 0;
+						tickWallImgSwap();
+					}, 500);
+				}
+
+				window.__mpInitWallImgSwap = initWallImgSwap;
+
+				if (!window.__mpWallTouchOnce) {
+					window.__mpWallTouchOnce = true;
+					document.addEventListener(
+						'touchstart',
+						function () {
+							if (typeof window.__mpInitWallImgSwap === 'function') window.__mpInitWallImgSwap();
+						},
+						{ passive: true, once: true },
+					);
 				}
 
 				function initHomeWallOnce() {
