@@ -83,12 +83,55 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 				var MOSAIC_MS = 6000;
 				var MOSAIC_COUNT = 3;
 				var mosaicIntervalId = 0;
+				/** Crossfade táctil/WebView: transition + clase (CSS keyframes en <span> fallan a veces en móvil). */
+				var XF_MS = 4500;
+				var xfIntervalId = 0;
+				var xfSeq = 0;
 
 				function clearMosaicInterval() {
 					if (mosaicIntervalId) {
 						window.clearInterval(mosaicIntervalId);
 						mosaicIntervalId = 0;
 					}
+				}
+
+				function clearXfCrossfade() {
+					if (xfIntervalId) {
+						window.clearInterval(xfIntervalId);
+						xfIntervalId = 0;
+					}
+				}
+
+				function shouldUseJsCrossfade() {
+					if (!document.querySelector('[data-mp-crossfade]')) return false;
+					if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+					var useCssKeyframes =
+						window.matchMedia('(hover: hover)').matches &&
+						window.matchMedia('(pointer: fine)').matches &&
+						window.matchMedia('(min-width: 768px)').matches;
+					return !useCssKeyframes;
+				}
+
+				function tickXfCrossfade() {
+					xfSeq += 1;
+					document.querySelectorAll('[data-mp-crossfade]').forEach(function (node, idx) {
+						var tile = node.closest('.home-wall-tile');
+						if (tile && tile.getAttribute('aria-pressed') === 'true') return;
+						var showB = ((xfSeq + idx) % 2) === 1;
+						if (showB) node.classList.add('mp-js-xf-b');
+						else node.classList.remove('mp-js-xf-b');
+					});
+				}
+
+				function initJsCrossfade() {
+					clearXfCrossfade();
+					document.querySelectorAll('[data-mp-crossfade]').forEach(function (n) {
+						n.classList.remove('mp-js-xf-b');
+					});
+					if (!shouldUseJsCrossfade()) return;
+					xfSeq = 0;
+					xfIntervalId = window.setInterval(tickXfCrossfade, XF_MS);
+					window.setTimeout(tickXfCrossfade, 700);
 				}
 
 				function initHomeWallOnce() {
@@ -160,20 +203,24 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 
 				if (!window.__mpMosaicPrm) {
 					window.__mpMosaicPrm = true;
-					window
-						.matchMedia('(prefers-reduced-motion: reduce)')
-						.addEventListener('change', initMosaicRotate);
+					window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function () {
+						initMosaicRotate();
+						initJsCrossfade();
+					});
 				}
 
-				function scheduleMosaicInit() {
+				function scheduleHomeWallInit() {
 					window.requestAnimationFrame(function () {
-						window.requestAnimationFrame(initMosaicRotate);
+						window.requestAnimationFrame(function () {
+							initMosaicRotate();
+							initJsCrossfade();
+						});
 					});
 				}
 
 				function bootHomeWall() {
 					initHomeWallOnce();
-					scheduleMosaicInit();
+					scheduleHomeWallInit();
 				}
 
 				document.addEventListener('astro:page-load', bootHomeWall);
@@ -181,7 +228,7 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 				window.addEventListener('load', bootHomeWall);
 				window.addEventListener('pageshow', bootHomeWall);
 				document.addEventListener('visibilitychange', function () {
-					if (!document.hidden) scheduleMosaicInit();
+					if (!document.hidden) scheduleHomeWallInit();
 				});
 				bootHomeWall();
 				window.setTimeout(bootHomeWall, 400);

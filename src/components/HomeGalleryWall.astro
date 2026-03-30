@@ -74,27 +74,31 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 								>
 									<span class="home-wall-breathe" aria-hidden="true">
 										{dual ? (
-											<span class="home-wall-crossfade">
-												<img
-													src={a}
-													alt=""
-													loading={i < 2 ? 'eager' : 'lazy'}
-													decoding="async"
-													width="900"
-													height="700"
-													class="home-wall-layer home-wall-layer--a"
-													draggable="false"
-												/>
-												<img
-													src={b}
-													alt=""
-													loading="lazy"
-													decoding="async"
-													width="900"
-													height="700"
-													class="home-wall-layer home-wall-layer--b"
-													draggable="false"
-												/>
+											<span class="home-wall-crossfade" data-mp-crossfade>
+												<span class="home-wall-layer home-wall-layer--a">
+													<img
+														src={a}
+														alt=""
+														loading={i < 2 ? 'eager' : 'lazy'}
+														decoding="async"
+														width="900"
+														height="700"
+														class="home-wall-layer-img"
+														draggable="false"
+													/>
+												</span>
+												<span class="home-wall-layer home-wall-layer--b">
+													<img
+														src={b}
+														alt=""
+														loading="lazy"
+														decoding="async"
+														width="900"
+														height="700"
+														class="home-wall-layer-img"
+														draggable="false"
+													/>
+												</span>
 											</span>
 										) : (
 											<img
@@ -391,6 +395,7 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 			filter 0.45s ease;
 	}
 
+	/* Capas = <span>; la opacidad animada no va en <img> (WebKit móvil / WebView suele ignorarla). */
 	.home-wall-layer {
 		grid-column: 1;
 		grid-row: 1;
@@ -404,6 +409,15 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		transform: translateZ(0);
 	}
 
+	.home-wall-layer-img {
+		display: block;
+		width: 100%;
+		max-width: 100%;
+		height: auto;
+		pointer-events: none;
+		-webkit-user-drag: none;
+	}
+
 	.home-wall-breathe {
 		display: block;
 		width: 100%;
@@ -415,31 +429,24 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 		transform-origin: 50% 80%;
 	}
 
-	.home-wall-layer--a {
-		-webkit-animation: mp-home-xfade-a 36s ease-in-out infinite;
-		animation: mp-home-xfade-a 36s ease-in-out infinite;
-		-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
-		animation-delay: calc(var(--breathe, 0) * -4.25s);
-		will-change: opacity;
-	}
-
-	.home-wall-layer--b {
-		-webkit-animation: mp-home-xfade-b 36s ease-in-out infinite;
-		animation: mp-home-xfade-b 36s ease-in-out infinite;
-		-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
-		animation-delay: calc(var(--breathe, 0) * -4.25s);
-		will-change: opacity;
-	}
-
-	@media (max-width: 767.98px) {
-		.home-wall-layer--a,
-		.home-wall-layer--b {
-			-webkit-animation-duration: 12s;
-			animation-duration: 12s;
+	/* Solo escritorio ancho + ratón: keyframes. En viewport estrecho o táctil va JS + transition. */
+	@media (hover: hover) and (pointer: fine) and (min-width: 768px) {
+		.home-wall-layer--a {
+			-webkit-animation: mp-home-xfade-a 36s ease-in-out infinite;
+			animation: mp-home-xfade-a 36s ease-in-out infinite;
+			-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
+			animation-delay: calc(var(--breathe, 0) * -4.25s);
+			will-change: opacity;
 		}
-	}
 
-	@media (hover: hover) and (pointer: fine) {
+		.home-wall-layer--b {
+			-webkit-animation: mp-home-xfade-b 36s ease-in-out infinite;
+			animation: mp-home-xfade-b 36s ease-in-out infinite;
+			-webkit-animation-delay: calc(var(--breathe, 0) * -4.25s);
+			animation-delay: calc(var(--breathe, 0) * -4.25s);
+			will-change: opacity;
+		}
+
 		.home-wall-tile:hover .home-wall-layer--a,
 		.home-wall-tile:hover .home-wall-layer--b {
 			-webkit-animation-play-state: paused;
@@ -451,6 +458,36 @@ function uniformWallCols(n: number, breakpoint: 'sm' | 'md'): number {
 	.home-wall-tile[aria-pressed='true'] .home-wall-layer--b {
 		-webkit-animation-play-state: paused;
 		animation-play-state: paused;
+	}
+
+	/*
+	 * Táctil, WebView o ventana estrecha: transition + clase (JS en BaseLayout).
+	 */
+	@media (max-width: 767.98px), (hover: none), (pointer: coarse) {
+		.home-wall-crossfade[data-mp-crossfade] .home-wall-layer--a,
+		.home-wall-crossfade[data-mp-crossfade] .home-wall-layer--b {
+			-webkit-animation: none !important;
+			animation: none !important;
+			will-change: opacity;
+			-webkit-transition: opacity 0.95s ease-in-out;
+			transition: opacity 0.95s ease-in-out;
+		}
+
+		.home-wall-crossfade[data-mp-crossfade] .home-wall-layer--a {
+			opacity: 1;
+		}
+
+		.home-wall-crossfade[data-mp-crossfade] .home-wall-layer--b {
+			opacity: 0;
+		}
+
+		.home-wall-crossfade[data-mp-crossfade].mp-js-xf-b .home-wall-layer--a {
+			opacity: 0;
+		}
+
+		.home-wall-crossfade[data-mp-crossfade].mp-js-xf-b .home-wall-layer--b {
+			opacity: 1;
+		}
 	}
 
 	.home-wall-img--single {
