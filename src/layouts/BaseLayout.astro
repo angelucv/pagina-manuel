@@ -261,6 +261,102 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 				window.setTimeout(bootHomeWall, 1200);
 			})();
 		</script>
+		<!-- Galería marquesina: init global + astro:page-load (el inline en la página no se re-ejecuta con view transitions). -->
+		<script is:inline>
+			(function () {
+				var DURATION_MS = 40000;
+				var raf = 0;
+				var t0 = 0;
+				var el = null;
+
+				function findEl() {
+					return document.querySelector('[data-ensayo-marquee]');
+				}
+
+				/** scrollWidth a veces es 0 en flex/WebKit hasta medir hijos. */
+				function halfLoopPx(node) {
+					var sw = node.scrollWidth;
+					if (sw >= 48) return sw / 2;
+					var imgs = node.querySelectorAll('img');
+					if (!imgs.length) return 0;
+					var style = window.getComputedStyle(node);
+					var gap = parseFloat(style.gap || style.columnGap || '0') || 16;
+					var total = 0;
+					for (var i = 0; i < imgs.length; i++) {
+						var w = imgs[i].getBoundingClientRect().width;
+						if (w < 1) w = imgs[i].offsetWidth;
+						total += w;
+						if (i < imgs.length - 1) total += gap;
+					}
+					return total >= 48 ? total / 2 : 0;
+				}
+
+				function stopMarquee() {
+					if (raf) {
+						cancelAnimationFrame(raf);
+						raf = 0;
+					}
+					if (el) {
+						el.style.transform = '';
+						el.style.webkitTransform = '';
+						el.style.willChange = '';
+					}
+					el = null;
+					t0 = 0;
+				}
+
+				function frame(now) {
+					el = el || findEl();
+					if (!el) {
+						raf = requestAnimationFrame(frame);
+						return;
+					}
+					var half = halfLoopPx(el);
+					if (half < 24) {
+						raf = requestAnimationFrame(frame);
+						return;
+					}
+					if (!t0) t0 = now;
+					var u = ((now - t0) % DURATION_MS) / DURATION_MS;
+					var x = -u * half;
+					el.style.transform = 'translate3d(' + x + 'px,0,0)';
+					el.style.webkitTransform = 'translate3d(' + x + 'px,0,0)';
+					raf = requestAnimationFrame(frame);
+				}
+
+				function bootMarquee() {
+					stopMarquee();
+					var node = findEl();
+					if (!node) return;
+					/* Igual que el muro de inicio: “quitar animaciones” en Android activa reduce y el usuario no veía movimiento. */
+					node.style.animation = 'none';
+					node.style.webkitAnimation = 'none';
+					node.style.willChange = 'transform';
+					el = node;
+					t0 = 0;
+					if (!node.dataset.mpMarqueeRo) {
+						node.dataset.mpMarqueeRo = '1';
+						try {
+							new ResizeObserver(function () {
+								t0 = 0;
+							}).observe(node);
+						} catch (e) {
+							/* IE / entornos sin RO */
+						}
+					}
+					raf = requestAnimationFrame(frame);
+				}
+
+				document.addEventListener('astro:before-swap', stopMarquee);
+				document.addEventListener('astro:page-load', bootMarquee);
+				document.addEventListener('DOMContentLoaded', bootMarquee);
+				window.addEventListener('load', bootMarquee);
+				window.addEventListener('pageshow', bootMarquee);
+				bootMarquee();
+				window.setTimeout(bootMarquee, 400);
+				window.setTimeout(bootMarquee, 1800);
+			})();
+		</script>
 		<script is:inline>
 			(function () {
 				if (typeof window === 'undefined') return;
