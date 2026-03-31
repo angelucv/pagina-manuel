@@ -1,7 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import InstagramFeed from '../components/InstagramFeed.astro';
 import { directorioNoticiasMedios } from '../data/biografia-enlaces';
+import instagramPosts from '../data/instagram-posts.json';
+import instagramWidget from '../data/instagram-widget.json';
+import type { InstagramPost, InstagramWidgetConfig } from '../data/instagram-types';
+
+const instagramProfileUrl = 'https://www.instagram.com/manuelparadaescultor/';
+const posts = instagramPosts as InstagramPost[];
+/** El embed de Elfsight vive en la página de inicio (src/data/instagram-widget-embed.html). */
+const widget = instagramWidget as InstagramWidgetConfig;
 ---
 
 <BaseLayout
@@ -38,5 +47,7 @@ import { directorioNoticiasMedios } from '../data/biografia-enlaces';
 				))
 			}
 		</ul>
+
+		<InstagramFeed posts={posts} profileUrl={instagramProfileUrl} widget={widget} />
 	</main>
 </BaseLayout>

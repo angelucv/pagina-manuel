@@ -1,0 +1,44 @@
+---
+import { readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+const embedPath = join(process.cwd(), 'src', 'data', 'instagram-widget-embed.html');
+let embedHtml = '';
+if (existsSync(embedPath)) {
+	embedHtml = readFileSync(embedPath, 'utf8').replace(/<!--[\s\S]*?-->/g, '').trim();
+}
+const hasEmbed = embedHtml.length > 8;
+const profileUrl = 'https://www.instagram.com/manuelparadaescultor/';
+---
+
+{
+	hasEmbed ? (
+		<section
+			id="instagram-feed"
+			class="border-t border-white/10 py-10 sm:py-12"
+			aria-labelledby="home-instagram-heading"
+		>
+			<h2
+				id="home-instagram-heading"
+				class="text-[10px] font-medium uppercase tracking-[0.25em] text-neutral-500 sm:text-xs"
+			>
+				Instagram
+			</h2>
+			<p class="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-400">
+				Publicaciones recientes de{' '}
+				<a
+					href={profileUrl}
+					class="text-amber-200/90 underline-offset-2 hover:underline"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					@manuelparadaescultor
+				</a>
+				.
+			</p>
+			<div class="instagram-widget-embed mt-6 overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/30 p-2 sm:mt-8 sm:p-4">
+				<Fragment set:html={embedHtml} />
+			</div>
+		</section>
+	) : null
+}

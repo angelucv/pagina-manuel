@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "build:og": "node scripts/build-og.mjs",
-    "prebuild": "node scripts/build-og.mjs",
+    "sync:instagram": "node scripts/fetch-instagram-posts.mjs",
+    "prebuild": "node scripts/build-og.mjs && node scripts/fetch-instagram-posts.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

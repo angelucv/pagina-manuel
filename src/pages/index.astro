@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import HomeGalleryWall from '../components/HomeGalleryWall.astro';
+import ElfsightInstagramEmbed from '../components/ElfsightInstagramEmbed.astro';
 const logosGaleria = [
 	{ src: '/logo-marca-apilada.png', alt: 'Manuel Parada, escultor — logotipo principal' },
 	{ src: '/logo-propuestas/logomanu1.PNG', alt: 'Propuesta de logotipo 1' },
@@ -54,6 +55,8 @@ const logosGaleria = [
 					retry();
 				})();
 			</script>
+
+			<ElfsightInstagramEmbed />
 
 			<nav
 				class="mx-auto max-w-3xl border-t border-white/10 px-0 pb-2 pt-8 text-left sm:pb-3 sm:pt-10"

@@ -1,0 +1,144 @@
+---
+import type { InstagramPost, InstagramWidgetConfig } from '../data/instagram-types';
+
+interface Props {
+	posts: InstagramPost[];
+	profileUrl: string;
+	widget?: InstagramWidgetConfig;
+}
+
+const { posts, profileUrl, widget = {} } = Astro.props;
+
+const rawIframe = typeof widget.iframeSrc === 'string' ? widget.iframeSrc.trim() : '';
+const rawHtml = typeof widget.embedHtml === 'string' ? widget.embedHtml.trim() : '';
+
+function safeIframeSrc(url: string): string {
+	if (!url) return '';
+	try {
+		const u = new URL(url);
+		if (u.protocol !== 'https:') return '';
+		return u.href;
+	} catch {
+		return '';
+	}
+}
+
+const iframeSrc = safeIframeSrc(rawIframe);
+const embedHtml = rawHtml;
+const hasExternal = Boolean(iframeSrc || embedHtml);
+const hideApiGrid = hasExternal && widget.hideApiGridWhenEmbed !== false;
+
+function excerpt(text: string, max = 140): string {
+	const t = text.replace(/\s+/g, ' ').trim();
+	if (t.length <= max) return t;
+	return t.slice(0, max - 1).trim() + '…';
+}
+---
+
+<section class="mt-14 border-t border-white/10 pt-12" aria-labelledby="instagram-feed-heading">
+	<h2 id="instagram-feed-heading" class="text-xl font-light tracking-tight text-white sm:text-2xl">
+		Instagram
+	</h2>
+		<p class="mt-2 text-sm leading-relaxed text-neutral-400">
+		Publicaciones recientes de{' '}
+		<a href={profileUrl} class="text-amber-200/90 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">
+			@manuelparadaescultor
+		</a>
+		.
+		{hasExternal
+			? ' El mosaico inferior puede venir de un servicio externo (sin tokens de Meta).'
+			: ' El feed en vivo está en la página de inicio; aquí puede mostrarse una galería sincronizada por API si configuras .env.example.'}
+	</p>
+
+	{
+		hasExternal ? (
+			<div class="mt-8 space-y-6">
+				{iframeSrc ? (
+					<div class="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/30">
+						<iframe
+							title="Publicaciones de Instagram"
+							src={iframeSrc}
+							class="block min-h-[min(85vh,820px)] w-full border-0 sm:min-h-[520px]"
+							loading="lazy"
+							referrerpolicy="no-referrer-when-downgrade"
+							allowfullscreen
+						/>
+					</div>
+				) : null}
+				{embedHtml ? (
+					<div class="instagram-widget-embed overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/30 p-2 sm:p-4">
+						<Fragment set:html={embedHtml} />
+					</div>
+				) : null}
+			</div>
+		) : null
+	}
+
+	{
+		!hideApiGrid && posts.length > 0 ? (
+			<ul class="mt-8 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+				{posts.map((post) => (
+					<li>
+						<a
+							href={post.permalink}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="group block overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/40 transition-[border-color,box-shadow] hover:border-amber-200/25 hover:shadow-[0_0_0_1px_rgba(251,191,36,0.12)]"
+						>
+							{post.imageUrl ? (
+								<img
+									src={post.imageUrl}
+									alt=""
+									class="aspect-[4/3] w-full object-cover opacity-95 transition-opacity group-hover:opacity-100"
+									width="640"
+									height="480"
+									loading="lazy"
+									decoding="async"
+									referrerpolicy="no-referrer-when-downgrade"
+								/>
+							) : (
+								<div class="flex aspect-[4/3] w-full items-center justify-center bg-neutral-800 text-xs text-neutral-500">
+									Ver en Instagram
+								</div>
+							)}
+							<div class="border-t border-white/5 px-4 py-3">
+								{post.publishedAt ? (
+									<time
+										class="block text-[10px] font-medium uppercase tracking-widest text-neutral-600"
+										datetime={post.publishedAt}
+									>
+										{new Date(post.publishedAt).toLocaleDateString('es-VE', {
+											day: 'numeric',
+											month: 'short',
+											year: 'numeric',
+										})}
+									</time>
+								) : null}
+								<p class="mt-1 max-h-[4.5rem] overflow-hidden text-sm leading-snug text-neutral-300">{excerpt(post.caption) || 'Publicación'}</p>
+								<span class="mt-2 inline-block text-xs text-amber-200/80 group-hover:underline">Abrir en Instagram →</span>
+							</div>
+						</a>
+					</li>
+				))}
+			</ul>
+		) : null
+	}
+
+	{
+		!hasExternal && posts.length === 0 ? (
+			<div class="mt-8 rounded-2xl border border-white/10 bg-neutral-900/30 px-5 py-8 text-center text-sm text-neutral-400">
+				<p>
+					El feed de Instagram está en la{' '}
+					<a href="/#instagram-feed" class="text-amber-200/90 underline-offset-2 hover:underline">
+						página de inicio
+					</a>
+					, debajo de la galería de fotos. También puedes seguir la cuenta en{' '}
+					<a href={profileUrl} class="text-amber-200/90 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">
+						Instagram
+					</a>
+					.
+				</p>
+			</div>
+		) : null
+	}
+</section>

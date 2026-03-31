@@ -51,6 +51,8 @@ const ogImageURL = new URL(ogImage.replace(/^\//, ''), Astro.site);
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImageURL.href} />
+		<!-- Elfsight: una sola carga en todo el sitio (view transitions + widget en inicio). -->
+		<script is:inline async src="https://elfsightcdn.com/platform.js"></script>
 		<ClientRouter />
 	</head>
 	<body class="min-h-dvh bg-neutral-950 text-neutral-100 antialiased">
