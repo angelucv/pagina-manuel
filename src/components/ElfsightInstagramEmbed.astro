@@ -37,7 +37,7 @@ const profileUrl = 'https://www.instagram.com/manuelparadaescultor/';
 				.
 			</p>
 			<div
-				class="instagram-widget-embed mt-6 w-full min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/30 py-2 sm:mt-8 sm:py-3 sm:px-1"
+				class="instagram-widget-embed mt-6 flex w-full min-w-0 justify-center overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/30 py-2 sm:mt-8 sm:py-3 sm:px-1"
 			>
 				<Fragment set:html={embedHtml} />
 			</div>
@@ -46,9 +46,16 @@ const profileUrl = 'https://www.instagram.com/manuelparadaescultor/';
 }
 
 <style>
-	/* El ancho real lo marca Elfsight en su panel; aquí solo evitamos que el iframe quede “encogido” en desktop. */
+	/* Centrar el bloque que inyecta Elfsight (suele ser más estrecho que el main). */
+	.instagram-widget-embed :global(> *) {
+		margin-inline: auto;
+		max-width: 100%;
+	}
+
 	.instagram-widget-embed :global(iframe) {
+		display: block;
 		width: 100% !important;
 		max-width: 100% !important;
+		margin-inline: auto;
 	}
 </style>
