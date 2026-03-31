@@ -163,28 +163,42 @@ const [heroSrc, ...gridSrcs] = photos;
 			}
 		}
 
-		.ensayo-marquee {
-			animation: ensayo-marquee-scroll 40s linear infinite;
-		}
+	}
 
-		@keyframes ensayo-marquee-scroll {
-			from {
-				transform: translateX(0);
-			}
-			to {
-				transform: translateX(-50%);
-			}
+	/* Marquesina: fuera de no-preference (WebViews móviles a menudo no aplican esa media query). */
+	@keyframes ensayo-marquee-scroll {
+		from {
+			transform: translate3d(0, 0, 0);
 		}
+		to {
+			transform: translate3d(-50%, 0, 0);
+		}
+	}
+
+	.ensayo-marquee {
+		will-change: transform;
+		-webkit-animation: ensayo-marquee-scroll 40s linear infinite;
+		animation: ensayo-marquee-scroll 40s linear infinite;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.ensayo-card {
 			opacity: 1;
 		}
+
+		.ensayo-marquee {
+			-webkit-animation: none !important;
+			animation: none !important;
+			will-change: auto;
+		}
 	}
 
-	.ensayo-marquee-wrap:hover .ensayo-marquee {
-		animation-play-state: paused;
+	/* Pausa solo con puntero fino; en táctil :hover pegado frenaba la cinta. */
+	@media (hover: hover) and (pointer: fine) {
+		.ensayo-marquee-wrap:hover .ensayo-marquee {
+			-webkit-animation-play-state: paused;
+			animation-play-state: paused;
+		}
 	}
 
 	@supports (animation-timeline: view()) {
