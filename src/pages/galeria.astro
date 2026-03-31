@@ -104,14 +104,14 @@ const [heroSrc, ...gridSrcs] = photos;
 			<div class="ensayo-marquee-wrap relative mt-8 overflow-hidden py-2">
 				<div class="ensayo-marquee-fade pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-neutral-950 to-transparent sm:w-32" />
 				<div class="ensayo-marquee-fade pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-neutral-950 to-transparent sm:w-32" />
-				<div class="ensayo-marquee flex w-max gap-4">
+				<div class="ensayo-marquee flex w-max gap-4" data-ensayo-marquee>
 					{
 						[...photos, ...photos].map((src, idx) => (
 							<img
 								src={src}
 								alt=""
 								class="h-24 w-36 shrink-0 rounded-lg object-cover opacity-90 ring-1 ring-white/10 sm:h-28 sm:w-44"
-								loading="lazy"
+								loading="eager"
 								decoding="async"
 								width="176"
 								height="112"
@@ -122,6 +122,83 @@ const [heroSrc, ...gridSrcs] = photos;
 				</div>
 			</div>
 		</section>
+
+		<!-- Marquesina: JS mueve transform (CSS animation falla en muchos móviles / WebKit). -->
+		<script is:inline>
+			(function () {
+				var DURATION_MS = 40000;
+				var raf = 0;
+				var t0 = 0;
+				var el = null;
+
+				function findEl() {
+					return document.querySelector('[data-ensayo-marquee]');
+				}
+
+				function reducedMotion() {
+					try {
+						return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+					} catch (e) {
+						return false;
+					}
+				}
+
+				function stopLoop() {
+					if (raf) cancelAnimationFrame(raf);
+					raf = 0;
+				}
+
+				function frame(now) {
+					el = el || findEl();
+					if (!el) {
+						raf = requestAnimationFrame(frame);
+						return;
+					}
+					if (reducedMotion()) {
+						el.style.transform = '';
+						el.style.webkitTransform = '';
+						el.style.willChange = 'auto';
+						return;
+					}
+					var half = el.scrollWidth / 2;
+					if (half < 24) {
+						raf = requestAnimationFrame(frame);
+						return;
+					}
+					if (!t0) t0 = now;
+					var u = ((now - t0) % DURATION_MS) / DURATION_MS;
+					var x = -u * half;
+					el.style.transform = 'translate3d(' + x + 'px,0,0)';
+					el.style.webkitTransform = 'translate3d(' + x + 'px,0,0)';
+					raf = requestAnimationFrame(frame);
+				}
+
+				function boot() {
+					stopLoop();
+					el = findEl();
+					t0 = 0;
+					if (!el) return;
+					el.style.animation = 'none';
+					el.style.webkitAnimation = 'none';
+					if (reducedMotion()) {
+						el.style.transform = '';
+						el.style.webkitTransform = '';
+						el.style.willChange = 'auto';
+						return;
+					}
+					el.style.willChange = 'transform';
+					raf = requestAnimationFrame(frame);
+				}
+
+				document.addEventListener('astro:page-load', boot);
+				document.addEventListener('DOMContentLoaded', boot);
+				window.addEventListener('load', boot);
+				window.addEventListener('pageshow', boot);
+				boot();
+				setTimeout(boot, 400);
+				setTimeout(boot, 1800);
+			})();
+		</script>
 	</main>
 </BaseLayout>
 
@@ -165,39 +242,15 @@ const [heroSrc, ...gridSrcs] = photos;
 
 	}
 
-	/* Marquesina: fuera de no-preference (WebViews móviles a menudo no aplican esa media query). */
-	@keyframes ensayo-marquee-scroll {
-		from {
-			transform: translate3d(0, 0, 0);
-		}
-		to {
-			transform: translate3d(-50%, 0, 0);
-		}
-	}
-
+	/* Marquesina: el movimiento lo aplica el script inline (transform); aquí solo apoyo. */
 	.ensayo-marquee {
-		will-change: transform;
-		-webkit-animation: ensayo-marquee-scroll 40s linear infinite;
-		animation: ensayo-marquee-scroll 40s linear infinite;
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.ensayo-card {
 			opacity: 1;
-		}
-
-		.ensayo-marquee {
-			-webkit-animation: none !important;
-			animation: none !important;
-			will-change: auto;
-		}
-	}
-
-	/* Pausa solo con puntero fino; en táctil :hover pegado frenaba la cinta. */
-	@media (hover: hover) and (pointer: fine) {
-		.ensayo-marquee-wrap:hover .ensayo-marquee {
-			-webkit-animation-play-state: paused;
-			animation-play-state: paused;
 		}
 	}
 
