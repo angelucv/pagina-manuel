@@ -36,9 +36,19 @@ const profileUrl = 'https://www.instagram.com/manuelparadaescultor/';
 				</a>
 				.
 			</p>
-			<div class="instagram-widget-embed mt-6 overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/30 p-2 sm:mt-8 sm:p-4">
+			<div
+				class="instagram-widget-embed mt-6 w-full min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/30 py-2 sm:mt-8 sm:py-3 sm:px-1"
+			>
 				<Fragment set:html={embedHtml} />
 			</div>
 		</section>
 	) : null
 }
+
+<style>
+	/* El ancho real lo marca Elfsight en su panel; aquí solo evitamos que el iframe quede “encogido” en desktop. */
+	.instagram-widget-embed :global(iframe) {
+		width: 100% !important;
+		max-width: 100% !important;
+	}
+</style>
